@@ -19,6 +19,48 @@ const formatUserResponse = (user) => ({
   address: user.address
 });
 
+const registerStudent = async (req, res) => {
+  try {
+    const { fullName, firstName, lastName, email, password, phone, address } = req.body;
+    const resolvedFullName = fullName || [firstName, lastName].filter(Boolean).join(" ").trim();
+
+    if (!resolvedFullName || !email || !password) {
+      return res.status(400).json({
+        message: "Full name, email, and password are required"
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already in use" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const student = await User.create({
+      fullName: resolvedFullName,
+      email,
+      password: hashedPassword,
+      role: "STUDENT",
+      phone: phone || "",
+      address: address || ""
+    });
+
+    const token = signToken(student);
+
+    return res.status(201).json({
+      message: "Student account created successfully",
+      token,
+      user: formatUserResponse(student),
+      student: student.toPublicJSON()
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to create student account",
+      error: error.message
+    });
+  }
+};
+
 const login = async (req, res, requiredRole) => {
   try {
     const { email, password } = req.body;
@@ -67,5 +109,6 @@ const studentLogin = (req, res) => login(req, res, "STUDENT");
 
 module.exports = {
   adminLogin,
-  studentLogin
+  studentLogin,
+  registerStudent
 };

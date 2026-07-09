@@ -12,6 +12,13 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: process.env.APP_NAME || "LMS Backend"
+  });
+});
+
 app.use("/api", router);
 
 module.exports = app;

@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { adminLogin, logout as apiLogout, studentLogin } from '../api/auth'
+import { adminLogin, logout as apiLogout, registerStudent, studentLogin } from '../api/auth'
 import { getStoredUser, setStoredUser } from '../api/client'
 import type { Role, User } from '../types'
 
@@ -14,6 +14,7 @@ interface AuthContextValue {
   user: User | null
   isAuthenticated: boolean
   login: (role: Role, email: string, password: string) => Promise<User>
+  signup: (fullName: string, email: string, password: string) => Promise<User>
   logout: () => void
   updateUser: (user: User) => void
 }
@@ -32,6 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return response.user
   }, [])
 
+  const signup = useCallback(async (fullName: string, email: string, password: string) => {
+    const user = await registerStudent({ fullName, email, password })
+    setUser(user)
+    return user
+  }, [])
+
   const logout = useCallback(() => {
     apiLogout()
     setUser(null)
@@ -47,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       isAuthenticated: Boolean(user),
       login,
+      signup,
       logout,
       updateUser,
     }),

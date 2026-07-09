@@ -11,6 +11,7 @@ const {
   getStudent,
   updateStudent,
   deleteStudent,
+  deleteStudentPermanently,
   uploadCertificate: uploadCertificateHandler
 } = require("../controllers/admin.controller");
 
@@ -23,6 +24,7 @@ adminRouter.get("/students", listStudents);
 adminRouter.get("/students/:id", getStudent);
 adminRouter.put("/students/:id", updateStudent);
 adminRouter.delete("/students/:id", deleteStudent);
+adminRouter.delete("/students/:id/permanent", deleteStudentPermanently);
 adminRouter.post(
   "/students/:id/certificates",
   uploadCertificate.single("certificate"),

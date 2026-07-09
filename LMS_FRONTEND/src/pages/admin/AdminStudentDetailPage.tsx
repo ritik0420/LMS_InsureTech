@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   deactivateStudent,
+  deleteStudentPermanently,
   getStudent,
   uploadCertificate,
 } from '../../api/admin'
@@ -28,10 +29,12 @@ export function AdminStudentDetailPage() {
   const [error, setError] = useState('')
   const [certModalOpen, setCertModalOpen] = useState(false)
   const [deactivateOpen, setDeactivateOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const [certTitle, setCertTitle] = useState('')
   const [certFile, setCertFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [deactivating, setDeactivating] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const loadStudent = () => {
     if (!id) return
@@ -77,6 +80,18 @@ export function AdminStudentDetailPage() {
     }
   }
 
+  const handleDeletePermanent = async () => {
+    if (!id) return
+    setDeleting(true)
+    try {
+      await deleteStudentPermanently(id)
+      navigate('/admin/students')
+    } catch (err) {
+      setError(err instanceof ApiClientError ? err.message : 'Permanent deletion failed')
+      setDeleting(false)
+    }
+  }
+
   if (loading) return <Spinner />
   if (!student) {
     return (
@@ -117,6 +132,10 @@ export function AdminStudentDetailPage() {
               Deactivate
             </Button>
           )}
+          <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}>
+            <Trash2 className="h-4 w-4" />
+            Delete permanently
+          </Button>
         </div>
       </div>
 
@@ -253,6 +272,26 @@ export function AdminStudentDetailPage() {
           </Button>
           <Button variant="danger" loading={deactivating} onClick={handleDeactivate}>
             Deactivate
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal
+        open={deleteOpen}
+        title="Delete Student Permanently"
+        onClose={() => setDeleteOpen(false)}
+        size="sm"
+      >
+        <p className="text-sm text-slate-600">
+          This will permanently remove <strong>{student.fullName}</strong>&apos;s account and
+          all associated student data from the system. This action cannot be undone.
+        </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="secondary" onClick={() => setDeleteOpen(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" loading={deleting} onClick={handleDeletePermanent}>
+            Delete permanently
           </Button>
         </div>
       </Modal>

@@ -28,10 +28,14 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
+        
+        {/* Authentication Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/student/login" element={<StudentLoginPage />} />
 
+        {/* Admin Portal Routes - Protected */}
         <Route element={<ProtectedRoute role="ADMIN" />}>
           <Route
             element={<DashboardLayout navItems={adminNav} title="Admin Portal" />}
@@ -44,6 +48,7 @@ export default function App() {
           </Route>
         </Route>
 
+        {/* Student Portal Routes - Protected */}
         <Route element={<ProtectedRoute role="STUDENT" />}>
           <Route
             element={<DashboardLayout navItems={studentNav} title="Student Portal" />}
@@ -55,6 +60,7 @@ export default function App() {
           </Route>
         </Route>
 
+        {/* Catch-all - Redirect to Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>

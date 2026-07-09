@@ -55,6 +55,12 @@ export async function deactivateStudent(id: string) {
   })
 }
 
+export async function deleteStudentPermanently(id: string) {
+  return apiRequest<{ message: string }>(`/admin/students/${id}/permanent`, {
+    method: 'DELETE',
+  })
+}
+
 export async function uploadCertificate(
   studentId: string,
   file: File,

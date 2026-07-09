@@ -1,6 +1,10 @@
 import type { ApiError } from '../types'
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'production'
+    ? 'https://lms-backend.k4yuwc.easypanel.host/api'
+    : '/api')
 
 export class ApiClientError extends Error {
   status: number

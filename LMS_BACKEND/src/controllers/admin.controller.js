@@ -143,6 +143,26 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+const deleteStudentPermanently = async (req, res) => {
+  try {
+    const deletedStudent = await User.findOneAndDelete({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!deletedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.status(200).json({ message: "Student deleted permanently" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to delete student permanently",
+      error: error.message
+    });
+  }
+};
+
 const uploadCertificate = async (req, res) => {
   try {
     if (!req.file) {
@@ -195,5 +215,6 @@ module.exports = {
   getStudent,
   updateStudent,
   deleteStudent,
+  deleteStudentPermanently,
   uploadCertificate
 };
