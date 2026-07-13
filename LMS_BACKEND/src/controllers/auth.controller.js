@@ -16,7 +16,21 @@ const formatUserResponse = (user) => ({
   email: user.email,
   role: user.role,
   phone: user.phone,
-  address: user.address
+  address: user.address,
+  isOnboarded: user.isOnboarded,
+  currentStatusCityState: user.currentStatusCityState,
+  visaStatus: user.visaStatus,
+  visaExpiryDate: user.visaExpiryDate,
+  resumeFile: user.resumeFile,
+  totalExperience: user.totalExperience,
+  preferredDesignation: user.preferredDesignation,
+  preferredLocations: user.preferredLocations,
+  dateOfBirth: user.dateOfBirth,
+  openToRelocation: user.openToRelocation,
+  expectedSalary: user.expectedSalary,
+  preferredJobType: user.preferredJobType,
+  expectedSalaryPeriod: user.expectedSalaryPeriod,
+  securityClearance: user.securityClearance
 });
 
 const registerStudent = async (req, res) => {

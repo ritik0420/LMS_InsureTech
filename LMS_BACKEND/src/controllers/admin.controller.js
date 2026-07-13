@@ -85,12 +85,60 @@ const updateStudent = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    const { fullName, email, phone, address, isActive, password } = req.body;
+    const {
+      fullName,
+      email,
+      phone,
+      address,
+      isActive,
+      password,
+      currentStatusCityState,
+      visaStatus,
+      visaExpiryDate,
+      totalExperience,
+      preferredDesignation,
+      preferredLocations,
+      dateOfBirth,
+      openToRelocation,
+      expectedSalary,
+      preferredJobType,
+      expectedSalaryPeriod,
+      securityClearance
+    } = req.body;
 
     if (fullName) student.fullName = fullName;
     if (phone !== undefined) student.phone = phone;
     if (address !== undefined) student.address = address;
     if (isActive !== undefined) student.isActive = isActive;
+
+    if (currentStatusCityState !== undefined) student.currentStatusCityState = currentStatusCityState;
+    if (visaStatus !== undefined) student.visaStatus = visaStatus;
+    if (visaExpiryDate !== undefined) {
+      student.visaExpiryDate = visaExpiryDate ? new Date(visaExpiryDate) : null;
+    }
+    if (totalExperience !== undefined) student.totalExperience = totalExperience;
+    if (preferredDesignation !== undefined) student.preferredDesignation = preferredDesignation;
+    if (preferredLocations !== undefined) student.preferredLocations = preferredLocations;
+    if (dateOfBirth !== undefined) {
+      student.dateOfBirth = dateOfBirth ? new Date(dateOfBirth) : null;
+    }
+    if (openToRelocation !== undefined) student.openToRelocation = openToRelocation;
+    if (expectedSalary !== undefined) student.expectedSalary = expectedSalary;
+    if (expectedSalaryPeriod !== undefined) student.expectedSalaryPeriod = expectedSalaryPeriod;
+    if (securityClearance !== undefined) student.securityClearance = securityClearance;
+
+    if (preferredJobType !== undefined) {
+      if (Array.isArray(preferredJobType)) {
+        student.preferredJobType = preferredJobType;
+      } else {
+        try {
+          const parsed = JSON.parse(preferredJobType);
+          student.preferredJobType = Array.isArray(parsed) ? parsed : [preferredJobType];
+        } catch (e) {
+          student.preferredJobType = preferredJobType.split(",").map(s => s.trim()).filter(Boolean);
+        }
+      }
+    }
 
     if (email && email !== student.email) {
       const existing = await User.findOne({ email });
@@ -209,6 +257,38 @@ const uploadCertificate = async (req, res) => {
   }
 };
 
+const downloadStudentResume = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (!student.resumeFile || !student.resumeFile.path) {
+      return res.status(404).json({ message: "Resume file not found" });
+    }
+
+    const fs = require("fs");
+    if (!fs.existsSync(student.resumeFile.path)) {
+      return res.status(404).json({ message: "Resume file not found on disk" });
+    }
+
+    return res.download(
+      student.resumeFile.path,
+      student.resumeFile.originalName || student.resumeFile.filename
+    );
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to download student resume",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createStudent,
   listStudents,
@@ -216,5 +296,6 @@ module.exports = {
   updateStudent,
   deleteStudent,
   deleteStudentPermanently,
-  uploadCertificate
+  uploadCertificate,
+  downloadStudentResume
 };

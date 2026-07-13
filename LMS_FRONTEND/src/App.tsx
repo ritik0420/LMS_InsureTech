@@ -11,6 +11,7 @@ import { StudentCertificatesPage } from './pages/student/StudentCertificatesPage
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
 import { StudentDocumentsPage } from './pages/student/StudentDocumentsPage'
 import { StudentLoginPage } from './pages/student/StudentLoginPage'
+import { StudentOnboardingPage } from './pages/student/StudentOnboardingPage'
 import { StudentProfilePage } from './pages/student/StudentProfilePage'
 
 const adminNav = [
@@ -30,7 +31,7 @@ export default function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        
+
         {/* Authentication Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/student/login" element={<StudentLoginPage />} />
@@ -50,6 +51,7 @@ export default function App() {
 
         {/* Student Portal Routes - Protected */}
         <Route element={<ProtectedRoute role="STUDENT" />}>
+          <Route path="/student/onboarding" element={<StudentOnboardingPage />} />
           <Route
             element={<DashboardLayout navItems={studentNav} title="Student Portal" />}
           >

@@ -62,7 +62,75 @@ const userSchema = new mongoose.Schema(
       default: true
     },
     documents: [documentSchema],
-    certificates: [certificateSchema]
+    certificates: [certificateSchema],
+    isOnboarded: {
+      type: Boolean,
+      default: false
+    },
+    currentStatusCityState: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    visaStatus: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    visaExpiryDate: {
+      type: Date,
+      default: null
+    },
+    resumeFile: {
+      filename: String,
+      originalName: String,
+      mimeType: String,
+      size: Number,
+      path: String
+    },
+    totalExperience: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    preferredDesignation: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    preferredLocations: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    dateOfBirth: {
+      type: Date,
+      default: null
+    },
+    openToRelocation: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    expectedSalary: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    preferredJobType: {
+      type: [String],
+      default: []
+    },
+    expectedSalaryPeriod: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    securityClearance: {
+      type: String,
+      trim: true,
+      default: ""
+    }
   },
   {
     timestamps: true
@@ -80,6 +148,20 @@ userSchema.methods.toPublicJSON = function () {
     isActive: this.isActive,
     documents: this.documents,
     certificates: this.certificates,
+    isOnboarded: this.isOnboarded,
+    currentStatusCityState: this.currentStatusCityState,
+    visaStatus: this.visaStatus,
+    visaExpiryDate: this.visaExpiryDate,
+    resumeFile: this.resumeFile,
+    totalExperience: this.totalExperience,
+    preferredDesignation: this.preferredDesignation,
+    preferredLocations: this.preferredLocations,
+    dateOfBirth: this.dateOfBirth,
+    openToRelocation: this.openToRelocation,
+    expectedSalary: this.expectedSalary,
+    preferredJobType: this.preferredJobType,
+    expectedSalaryPeriod: this.expectedSalaryPeriod,
+    securityClearance: this.securityClearance,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt
   };

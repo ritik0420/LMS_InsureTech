@@ -12,7 +12,10 @@ const {
   listDocuments,
   deleteDocument,
   listCertificates,
-  downloadCertificate
+  downloadCertificate,
+  onboardStudent,
+  downloadResume,
+  updateResume
 } = require("../controllers/student.controller");
 
 const studentRouter = Router();
@@ -21,6 +24,21 @@ studentRouter.use(authenticate, authorize("STUDENT"));
 
 studentRouter.get("/profile", getProfile);
 studentRouter.put("/profile", updateProfile);
+studentRouter.put(
+  "/profile/resume",
+  uploadDocument.single("resume"),
+  handleUploadError,
+  updateResume
+);
+
+studentRouter.post(
+  "/onboard",
+  uploadDocument.single("resume"),
+  handleUploadError,
+  onboardStudent
+);
+
+studentRouter.get("/resume/download", downloadResume);
 
 studentRouter.get("/documents", listDocuments);
 studentRouter.post(

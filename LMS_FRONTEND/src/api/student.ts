@@ -11,6 +11,18 @@ export async function updateProfile(payload: {
   phone?: string
   address?: string
   password?: string
+  currentStatusCityState?: string
+  visaStatus?: string
+  visaExpiryDate?: string
+  totalExperience?: string
+  preferredDesignation?: string
+  preferredLocations?: string
+  dateOfBirth?: string
+  openToRelocation?: string
+  expectedSalary?: string
+  preferredJobType?: string[]
+  expectedSalaryPeriod?: string
+  securityClearance?: string
 }) {
   const data = await apiRequest<{ message: string; student: User }>(
     '/student/profile',
@@ -20,6 +32,35 @@ export async function updateProfile(payload: {
     },
   )
   return data.student
+}
+
+export async function onboardStudent(formData: FormData) {
+  const data = await apiRequest<{ message: string; student: User }>(
+    '/student/onboard',
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+  return data.student
+}
+
+export async function downloadResume(filename: string) {
+  return downloadFile('/student/resume/download', filename)
+}
+
+export async function updateResume(file: File) {
+  const formData = new FormData()
+  formData.append('resume', file)
+
+  const data = await apiRequest<{ message: string; resumeFile: Document }>(
+    '/student/profile/resume',
+    {
+      method: 'PUT',
+      body: formData,
+    },
+  )
+  return data.resumeFile
 }
 
 export async function listDocuments() {

@@ -1,4 +1,4 @@
-import { Award, FileText, Pencil, Trash2, Upload } from 'lucide-react'
+import { Award, FileText, Pencil, Trash2, Upload, Download } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -7,7 +7,7 @@ import {
   getStudent,
   uploadCertificate,
 } from '../../api/admin'
-import { ApiClientError } from '../../api/client'
+import { ApiClientError, downloadFile } from '../../api/client'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
@@ -92,6 +92,15 @@ export function AdminStudentDetailPage() {
     }
   }
 
+  const handleDownloadStudentResume = async () => {
+    if (!student?.resumeFile || !id) return
+    try {
+      await downloadFile(`/admin/students/${id}/resume/download`, student.resumeFile.originalName)
+    } catch (err) {
+      setError('Failed to download student resume')
+    }
+  }
+
   if (loading) return <Spinner />
   if (!student) {
     return (
@@ -150,6 +159,98 @@ export function AdminStudentDetailPage() {
         />
         <InfoCard label="Joined" value={formatDate(student.createdAt)} />
       </div>
+
+      {student.isOnboarded ? (
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Job Application Profile</h2>
+              <p className="text-xs text-slate-500">First-time onboarding information submitted by student</p>
+            </div>
+            {student.resumeFile && (
+              <Button
+                size="sm"
+                onClick={handleDownloadStudentResume}
+                className="bg-cyan-600 hover:bg-cyan-700 flex items-center gap-1.5 text-white"
+              >
+                <Download className="h-4 w-4" />
+                Download Resume
+              </Button>
+            )}
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Legal Name</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.fullName || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">US Contact Number</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.phone || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Date of Birth</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">
+                {student.dateOfBirth ? new Date(student.dateOfBirth).toLocaleDateString() : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Current Status / Location</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.currentStatusCityState || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Visa Status</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.visaStatus || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Visa Expiry Date</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">
+                {student.visaExpiryDate ? new Date(student.visaExpiryDate).toLocaleDateString() : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Experience</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.totalExperience || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Preferred Designation</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.preferredDesignation || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Preferred Locations</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.preferredLocations || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Open to Relocation?</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.openToRelocation || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Preferred Job Type</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">
+                {student.preferredJobType && student.preferredJobType.length > 0 
+                  ? student.preferredJobType.join(', ') 
+                  : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Expected Salary</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">
+                {student.expectedSalary} {student.expectedSalaryPeriod ? ` (${student.expectedSalaryPeriod})` : ''}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Security Clearance</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.securityClearance || '—'}</p>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm text-center py-8">
+          <p className="text-sm font-medium text-slate-500">
+            This student has not completed their Job Application onboarding profile yet.
+          </p>
+        </section>
+      )}
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">

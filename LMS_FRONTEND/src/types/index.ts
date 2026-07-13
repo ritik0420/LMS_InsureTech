@@ -11,6 +11,20 @@ export interface User {
   isActive?: boolean
   documents?: Document[]
   certificates?: Certificate[]
+  isOnboarded?: boolean
+  currentStatusCityState?: string
+  visaStatus?: string
+  visaExpiryDate?: string
+  resumeFile?: Document
+  totalExperience?: string
+  preferredDesignation?: string
+  preferredLocations?: string
+  dateOfBirth?: string
+  openToRelocation?: string
+  expectedSalary?: string
+  preferredJobType?: string[]
+  expectedSalaryPeriod?: string
+  securityClearance?: string
   createdAt?: string
   updatedAt?: string
 }
