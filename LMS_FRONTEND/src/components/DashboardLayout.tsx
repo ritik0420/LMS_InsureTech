@@ -30,7 +30,7 @@ export function DashboardLayout({ navItems, title }: DashboardLayoutProps) {
             <img
               src="/insuretech logo (1).png"
               alt="InsureTech Logo"
-              className="h-20 w-auto max-w-[150px] object-contain"
+              className="h-14 w-auto max-w-[200px] object-contain"
             />
             <div className="border-l border-slate-200 pl-3">
               <p className="text-sm font-semibold text-slate-900">InsureTech LMS</p>

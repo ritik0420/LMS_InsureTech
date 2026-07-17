@@ -289,6 +289,72 @@ const downloadStudentResume = async (req, res) => {
   }
 };
 
+const downloadStudentCertificate = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const certificate = student.certificates.id(req.params.certificateId);
+    if (!certificate) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    const fs = require("fs");
+    if (!fs.existsSync(certificate.path)) {
+      return res.status(404).json({ message: "Certificate file not found on disk" });
+    }
+
+    return res.download(
+      certificate.path,
+      certificate.originalName || certificate.filename
+    );
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to download student certificate",
+      error: error.message
+    });
+  }
+};
+
+const downloadStudentDocument = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const document = student.documents.id(req.params.documentId);
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    const fs = require("fs");
+    if (!fs.existsSync(document.path)) {
+      return res.status(404).json({ message: "Document file not found on disk" });
+    }
+
+    return res.download(
+      document.path,
+      document.originalName || document.filename
+    );
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to download student document",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createStudent,
   listStudents,
@@ -297,5 +363,7 @@ module.exports = {
   deleteStudent,
   deleteStudentPermanently,
   uploadCertificate,
-  downloadStudentResume
+  downloadStudentResume,
+  downloadStudentCertificate,
+  downloadStudentDocument
 };

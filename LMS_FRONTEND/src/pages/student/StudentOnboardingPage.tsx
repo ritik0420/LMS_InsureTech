@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { ArrowRight, ArrowLeft, Upload, Check } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Upload, Check, LogOut } from 'lucide-react'
 
 const VISA_STATUS_OPTIONS = [
   'US Citizen',
@@ -30,7 +30,7 @@ const JOB_TYPE_OPTIONS = [
 
 export function StudentOnboardingPage() {
   const navigate = useNavigate()
-  const { user, updateUser } = useAuth()
+  const { user, updateUser, logout } = useAuth()
   
   const [step, setStep] = useState(1)
   const [error, setError] = useState('')
@@ -155,6 +155,21 @@ export function StudentOnboardingPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 py-12 sm:px-6 lg:px-8">
+      {/* Logout Button */}
+      <div className="fixed top-4 right-4 z-50 sm:absolute sm:top-6 sm:right-6">
+        <button
+          type="button"
+          onClick={() => {
+            logout()
+            navigate('/login')
+          }}
+          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition-all hover:bg-red-50 hover:text-red-600 hover:border-red-200 hover:shadow-md active:scale-95"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
         <div className="flex justify-center">
           <img

@@ -13,7 +13,9 @@ const {
   deleteStudent,
   deleteStudentPermanently,
   uploadCertificate: uploadCertificateHandler,
-  downloadStudentResume
+  downloadStudentResume,
+  downloadStudentCertificate,
+  downloadStudentDocument
 } = require("../controllers/admin.controller");
 
 const adminRouter = Router();
@@ -27,6 +29,14 @@ adminRouter.put("/students/:id", updateStudent);
 adminRouter.delete("/students/:id", deleteStudent);
 adminRouter.delete("/students/:id/permanent", deleteStudentPermanently);
 adminRouter.get("/students/:id/resume/download", downloadStudentResume);
+adminRouter.get(
+  "/students/:id/certificates/:certificateId/download",
+  downloadStudentCertificate
+);
+adminRouter.get(
+  "/students/:id/documents/:documentId/download",
+  downloadStudentDocument
+);
 adminRouter.post(
   "/students/:id/certificates",
   uploadCertificate.single("certificate"),

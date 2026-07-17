@@ -101,6 +101,24 @@ export function AdminStudentDetailPage() {
     }
   }
 
+  const handleDownloadStudentCertificate = async (certificateId: string, filename: string) => {
+    if (!id) return
+    try {
+      await downloadFile(`/admin/students/${id}/certificates/${certificateId}/download`, filename)
+    } catch (err) {
+      setError('Failed to download certificate')
+    }
+  }
+
+  const handleDownloadStudentDocument = async (documentId: string, filename: string) => {
+    if (!id) return
+    try {
+      await downloadFile(`/admin/students/${id}/documents/${documentId}/download`, filename)
+    } catch (err) {
+      setError('Failed to download document')
+    }
+  }
+
   if (loading) return <Spinner />
   if (!student) {
     return (
@@ -285,6 +303,15 @@ export function AdminStudentDetailPage() {
                     </p>
                   </div>
                 </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleDownloadStudentCertificate(cert._id, cert.originalName)}
+                  className="flex items-center gap-1.5"
+                >
+                  <Download className="h-4 w-4" />
+                  Download
+                </Button>
               </li>
             ))}
           </ul>
@@ -305,12 +332,27 @@ export function AdminStudentDetailPage() {
         ) : (
           <ul className="divide-y divide-slate-100">
             {student.documents.map((doc) => (
-              <li key={doc._id} className="py-3 text-sm">
-                <span className="font-medium text-slate-900">{doc.originalName}</span>
-                <span className="text-slate-500">
-                  {' '}
-                  · {formatBytes(doc.size)} · {formatDate(doc.createdAt)}
-                </span>
+              <li key={doc._id} className="flex items-center justify-between py-3">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-slate-50 p-2 text-slate-600">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-900">{doc.originalName}</p>
+                    <p className="text-sm text-slate-500">
+                      {formatBytes(doc.size)} · {formatDate(doc.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleDownloadStudentDocument(doc._id, doc.originalName)}
+                  className="flex items-center gap-1.5"
+                >
+                  <Download className="h-4 w-4" />
+                  Download
+                </Button>
               </li>
             ))}
           </ul>
