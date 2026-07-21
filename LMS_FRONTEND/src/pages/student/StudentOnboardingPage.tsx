@@ -28,6 +28,39 @@ const JOB_TYPE_OPTIONS = [
   'Remote',
 ]
 
+const COUNTRY_OPTIONS = [
+  { code: 'US', name: 'United States', dial: '+1' },
+  { code: 'IN', name: 'India', dial: '+91' },
+  { code: 'CA', name: 'Canada', dial: '+1' },
+  { code: 'GB', name: 'United Kingdom', dial: '+44' },
+  { code: 'AU', name: 'Australia', dial: '+61' },
+  { code: 'DE', name: 'Germany', dial: '+49' },
+  { code: 'FR', name: 'France', dial: '+33' },
+  { code: 'JP', name: 'Japan', dial: '+81' },
+  { code: 'CN', name: 'China', dial: '+86' },
+  { code: 'BR', name: 'Brazil', dial: '+55' },
+  { code: 'MX', name: 'Mexico', dial: '+52' },
+  { code: 'KR', name: 'South Korea', dial: '+82' },
+  { code: 'SG', name: 'Singapore', dial: '+65' },
+  { code: 'AE', name: 'United Arab Emirates', dial: '+971' },
+  { code: 'ZA', name: 'South Africa', dial: '+27' },
+  { code: 'NG', name: 'Nigeria', dial: '+234' },
+  { code: 'PH', name: 'Philippines', dial: '+63' },
+  { code: 'PK', name: 'Pakistan', dial: '+92' },
+  { code: 'BD', name: 'Bangladesh', dial: '+880' },
+  { code: 'ID', name: 'Indonesia', dial: '+62' },
+  { code: 'MY', name: 'Malaysia', dial: '+60' },
+  { code: 'NZ', name: 'New Zealand', dial: '+64' },
+  { code: 'IE', name: 'Ireland', dial: '+353' },
+  { code: 'NL', name: 'Netherlands', dial: '+31' },
+  { code: 'IT', name: 'Italy', dial: '+39' },
+  { code: 'ES', name: 'Spain', dial: '+34' },
+  { code: 'SE', name: 'Sweden', dial: '+46' },
+  { code: 'CH', name: 'Switzerland', dial: '+41' },
+  { code: 'SA', name: 'Saudi Arabia', dial: '+966' },
+  { code: 'KE', name: 'Kenya', dial: '+254' },
+]
+
 export function StudentOnboardingPage() {
   const navigate = useNavigate()
   const { user, updateUser, logout } = useAuth()
@@ -38,6 +71,7 @@ export function StudentOnboardingPage() {
 
   const [fullName, setFullName] = useState(user?.fullName || '')
   const [phone, setPhone] = useState('')
+  const [country, setCountry] = useState('')
   const [currentStatusCityState, setCurrentStatusCityState] = useState('')
   const [visaStatus, setVisaStatus] = useState('')
   const [visaExpiryDate, setVisaExpiryDate] = useState('')
@@ -77,7 +111,8 @@ export function StudentOnboardingPage() {
     setError('')
     if (currentStep === 1) {
       if (!fullName.trim()) return 'Full Legal Name is required'
-      if (!phone.trim()) return 'US Contact Number is required'
+      if (!country) return 'Country is required'
+      if (!phone.trim()) return 'Contact Number is required'
       if (!currentStatusCityState.trim()) return 'Current Status / City, State is required'
     } else if (currentStep === 2) {
       if (!visaStatus) return 'Current Visa Status is required'
@@ -128,6 +163,7 @@ export function StudentOnboardingPage() {
     const formData = new FormData()
     formData.append('fullName', fullName)
     formData.append('phone', phone)
+    formData.append('country', country)
     formData.append('currentStatusCityState', currentStatusCityState)
     formData.append('visaStatus', visaStatus)
     if (visaExpiryDate) formData.append('visaExpiryDate', visaExpiryDate)
@@ -236,15 +272,50 @@ export function StudentOnboardingPage() {
                   Email is linked to your signup account and cannot be modified.
                 </p>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Input
-                    label="US Contact Number *"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+1 (555) 019-2834"
+                {/* Country Selection */}
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Country *
+                  </label>
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
                     required
-                  />
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                  >
+                    <option value="">Select your country</option>
+                    {COUNTRY_OPTIONS.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-slate-700">
+                      Contact Number *
+                    </label>
+                    <div className="flex">
+                      <span className="inline-flex items-center rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-500">
+                        {country
+                          ? COUNTRY_OPTIONS.find((c) => c.code === country)?.dial || '—'
+                          : '—'}
+                      </span>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder={country === 'US' ? '(555) 019-2834' : 'Enter phone number'}
+                        required
+                        className="block w-full rounded-r-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      />
+                    </div>
+                    {!country && (
+                      <p className="text-xs text-amber-600">Please select a country first</p>
+                    )}
+                  </div>
                   <Input
                     label="Date of Birth"
                     type="date"
@@ -254,10 +325,10 @@ export function StudentOnboardingPage() {
                 </div>
 
                 <Input
-                  label="Current Status / City, State (ST) *"
+                  label="Current Location / City, State *"
                   value={currentStatusCityState}
                   onChange={(e) => setCurrentStatusCityState(e.target.value)}
-                  placeholder="e.g. Austin, TX"
+                  placeholder={country === 'US' ? 'e.g. Austin, TX' : 'e.g. London, England'}
                   required
                 />
               </div>
@@ -369,10 +440,10 @@ export function StudentOnboardingPage() {
                 />
 
                 <Input
-                  label="Preferred Locations (US/CA) *"
+                  label="Preferred Locations *"
                   value={preferredLocations}
                   onChange={(e) => setPreferredLocations(e.target.value)}
-                  placeholder="e.g. Austin, TX / Remote"
+                  placeholder="e.g. Austin, TX / Remote / London, UK"
                   required
                 />
 

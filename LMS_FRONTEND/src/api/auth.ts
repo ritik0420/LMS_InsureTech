@@ -11,6 +11,16 @@ export async function adminLogin(email: string, password: string) {
   return data
 }
 
+export async function managerLogin(email: string, password: string) {
+  const data = await apiRequest<AuthResponse>('/auth/manager/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  })
+  setToken(data.token)
+  setStoredUser(data.user)
+  return data
+}
+
 export async function studentLogin(email: string, password: string) {
   const data = await apiRequest<AuthResponse>('/auth/student/login', {
     method: 'POST',
@@ -41,3 +51,4 @@ export function logout() {
   setToken(null)
   setStoredUser(null)
 }
+

@@ -21,6 +21,7 @@ const updateProfile = async (req, res) => {
     const {
       fullName,
       phone,
+      country,
       address,
       password,
       currentStatusCityState,
@@ -39,6 +40,7 @@ const updateProfile = async (req, res) => {
 
     if (fullName) student.fullName = fullName;
     if (phone !== undefined) student.phone = phone;
+    if (country !== undefined) student.country = country;
     if (address !== undefined) student.address = address;
     if (password) {
       student.password = await bcrypt.hash(password, 10);
@@ -103,6 +105,7 @@ const onboardStudent = async (req, res) => {
     const {
       fullName,
       phone,
+      country,
       currentStatusCityState,
       visaStatus,
       visaExpiryDate,
@@ -119,6 +122,7 @@ const onboardStudent = async (req, res) => {
 
     if (fullName) student.fullName = fullName;
     if (phone) student.phone = phone;
+    if (country) student.country = country;
     if (currentStatusCityState) {
       student.currentStatusCityState = currentStatusCityState;
       student.address = currentStatusCityState;

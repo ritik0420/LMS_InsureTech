@@ -15,7 +15,12 @@ const {
   uploadCertificate: uploadCertificateHandler,
   downloadStudentResume,
   downloadStudentCertificate,
-  downloadStudentDocument
+  downloadStudentDocument,
+  listManagers,
+  createManager,
+  getManager,
+  assignStudentToManager,
+  unassignStudentFromManager
 } = require("../controllers/admin.controller");
 
 const adminRouter = Router();
@@ -44,4 +49,11 @@ adminRouter.post(
   uploadCertificateHandler
 );
 
+adminRouter.get("/managers", listManagers);
+adminRouter.post("/managers", createManager);
+adminRouter.get("/managers/:id", getManager);
+adminRouter.post("/managers/:managerId/assign/:studentId", assignStudentToManager);
+adminRouter.delete("/managers/:managerId/assign/:studentId", unassignStudentFromManager);
+
 module.exports = adminRouter;
+

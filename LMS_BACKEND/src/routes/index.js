@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const authRouter = require("./auth.routes");
 const adminRouter = require("./admin.routes");
+const managerRouter = require("./manager.routes");
 const studentRouter = require("./student.routes");
 
 const router = Router();
@@ -14,6 +15,8 @@ router.get("/health", (req, res) => {
 
 router.use("/auth", authRouter);
 router.use("/admin", adminRouter);
+router.use("/manager", managerRouter);
 router.use("/student", studentRouter);
 
 module.exports = router;
+

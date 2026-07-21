@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { adminLogin, logout as apiLogout, registerStudent, studentLogin } from '../api/auth'
+import { adminLogin, logout as apiLogout, managerLogin, registerStudent, studentLogin } from '../api/auth'
 import { getStoredUser, setStoredUser } from '../api/client'
 import type { Role, User } from '../types'
 
@@ -25,10 +25,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => getStoredUser())
 
   const login = useCallback(async (role: Role, email: string, password: string) => {
-    const response =
-      role === 'ADMIN'
-        ? await adminLogin(email, password)
-        : await studentLogin(email, password)
+    let response
+    if (role === 'ADMIN') {
+      response = await adminLogin(email, password)
+    } else if (role === 'MANAGER') {
+      response = await managerLogin(email, password)
+    } else {
+      response = await studentLogin(email, password)
+    }
     setUser(response.user)
     return response.user
   }, [])
@@ -71,3 +75,4 @@ export function useAuth() {
   }
   return context
 }
+

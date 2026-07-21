@@ -44,10 +44,15 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["ADMIN", "STUDENT"],
+      enum: ["ADMIN", "MANAGER", "STUDENT"],
       required: true
     },
     phone: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    country: {
       type: String,
       trim: true,
       default: ""
@@ -130,6 +135,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ""
+    },
+    assignedStudents: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+    ],
+    assignedManager: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null
     }
   },
   {
@@ -144,6 +157,7 @@ userSchema.methods.toPublicJSON = function () {
     email: this.email,
     role: this.role,
     phone: this.phone,
+    country: this.country,
     address: this.address,
     isActive: this.isActive,
     documents: this.documents,

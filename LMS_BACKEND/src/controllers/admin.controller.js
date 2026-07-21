@@ -89,6 +89,7 @@ const updateStudent = async (req, res) => {
       fullName,
       email,
       phone,
+      country,
       address,
       isActive,
       password,
@@ -108,6 +109,7 @@ const updateStudent = async (req, res) => {
 
     if (fullName) student.fullName = fullName;
     if (phone !== undefined) student.phone = phone;
+    if (country !== undefined) student.country = country;
     if (address !== undefined) student.address = address;
     if (isActive !== undefined) student.isActive = isActive;
 
@@ -355,6 +357,157 @@ const downloadStudentDocument = async (req, res) => {
   }
 };
 
+const listManagers = async (req, res) => {
+  try {
+    const managers = await User.find({ role: "MANAGER" })
+      .select("-password")
+      .populate({
+        path: "assignedStudents",
+        select: "fullName email isActive"
+      })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ managers });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch managers",
+      error: error.message
+    });
+  }
+};
+
+const createManager = async (req, res) => {
+  try {
+    const { fullName, email, password, phone, address } = req.body;
+
+    if (!fullName || !email || !password) {
+      return res.status(400).json({
+        message: "Full name, email, and password are required"
+      });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(409).json({ message: "Email already in use" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const manager = await User.create({
+      fullName,
+      email,
+      password: hashedPassword,
+      role: "MANAGER",
+      phone: phone || "",
+      address: address || ""
+    });
+
+    return res.status(201).json({
+      message: "Manager created successfully",
+      manager: manager.toPublicJSON()
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to create manager",
+      error: error.message
+    });
+  }
+};
+
+const getManager = async (req, res) => {
+  try {
+    const manager = await User.findOne({
+      _id: req.params.id,
+      role: "MANAGER"
+    })
+      .select("-password")
+      .populate({
+        path: "assignedStudents",
+        select: "fullName email phone isActive certificates isOnboarded createdAt"
+      });
+
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+
+    return res.status(200).json({ manager });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch manager",
+      error: error.message
+    });
+  }
+};
+
+const assignStudentToManager = async (req, res) => {
+  try {
+    const { managerId, studentId } = req.params;
+
+    const manager = await User.findOne({ _id: managerId, role: "MANAGER" });
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+
+    const student = await User.findOne({ _id: studentId, role: "STUDENT" });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const alreadyAssigned = manager.assignedStudents.some(
+      (sid) => sid.toString() === studentId
+    );
+    if (alreadyAssigned) {
+      return res.status(409).json({ message: "Student is already assigned to this manager" });
+    }
+
+    manager.assignedStudents.push(studentId);
+    await manager.save();
+
+    student.assignedManager = managerId;
+    await student.save();
+
+    return res.status(200).json({ message: "Student assigned to manager successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to assign student to manager",
+      error: error.message
+    });
+  }
+};
+
+const unassignStudentFromManager = async (req, res) => {
+  try {
+    const { managerId, studentId } = req.params;
+
+    const manager = await User.findOne({ _id: managerId, role: "MANAGER" });
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+
+    const student = await User.findOne({ _id: studentId, role: "STUDENT" });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    manager.assignedStudents = manager.assignedStudents.filter(
+      (sid) => sid.toString() !== studentId
+    );
+    await manager.save();
+
+    if (student.assignedManager && student.assignedManager.toString() === managerId) {
+      student.assignedManager = null;
+      await student.save();
+    }
+
+    return res.status(200).json({ message: "Student unassigned from manager successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to unassign student from manager",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createStudent,
   listStudents,
@@ -365,5 +518,11 @@ module.exports = {
   uploadCertificate,
   downloadStudentResume,
   downloadStudentCertificate,
-  downloadStudentDocument
+  downloadStudentDocument,
+  listManagers,
+  createManager,
+  getManager,
+  assignStudentToManager,
+  unassignStudentFromManager
 };
+

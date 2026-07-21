@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { adminLogin, studentLogin, registerStudent } = require("../controllers/auth.controller");
+const { adminLogin, managerLogin, studentLogin, registerStudent } = require("../controllers/auth.controller");
 
 const authRouter = Router();
 
@@ -18,6 +18,7 @@ authRouter.route("/student/signup")
   .post(registerStudent)
   .all(methodNotAllowed);
 authRouter.post("/admin/login", adminLogin);
+authRouter.post("/manager/login", managerLogin);
 authRouter.post("/student/login", studentLogin);
 
 module.exports = authRouter;

@@ -30,11 +30,45 @@ const JOB_TYPE_OPTIONS = [
   'Remote',
 ]
 
+const COUNTRY_OPTIONS = [
+  { code: 'US', name: 'United States', dial: '+1' },
+  { code: 'IN', name: 'India', dial: '+91' },
+  { code: 'CA', name: 'Canada', dial: '+1' },
+  { code: 'GB', name: 'United Kingdom', dial: '+44' },
+  { code: 'AU', name: 'Australia', dial: '+61' },
+  { code: 'DE', name: 'Germany', dial: '+49' },
+  { code: 'FR', name: 'France', dial: '+33' },
+  { code: 'JP', name: 'Japan', dial: '+81' },
+  { code: 'CN', name: 'China', dial: '+86' },
+  { code: 'BR', name: 'Brazil', dial: '+55' },
+  { code: 'MX', name: 'Mexico', dial: '+52' },
+  { code: 'KR', name: 'South Korea', dial: '+82' },
+  { code: 'SG', name: 'Singapore', dial: '+65' },
+  { code: 'AE', name: 'United Arab Emirates', dial: '+971' },
+  { code: 'ZA', name: 'South Africa', dial: '+27' },
+  { code: 'NG', name: 'Nigeria', dial: '+234' },
+  { code: 'PH', name: 'Philippines', dial: '+63' },
+  { code: 'PK', name: 'Pakistan', dial: '+92' },
+  { code: 'BD', name: 'Bangladesh', dial: '+880' },
+  { code: 'ID', name: 'Indonesia', dial: '+62' },
+  { code: 'MY', name: 'Malaysia', dial: '+60' },
+  { code: 'NZ', name: 'New Zealand', dial: '+64' },
+  { code: 'IE', name: 'Ireland', dial: '+353' },
+  { code: 'NL', name: 'Netherlands', dial: '+31' },
+  { code: 'IT', name: 'Italy', dial: '+39' },
+  { code: 'ES', name: 'Spain', dial: '+34' },
+  { code: 'SE', name: 'Sweden', dial: '+46' },
+  { code: 'CH', name: 'Switzerland', dial: '+41' },
+  { code: 'SA', name: 'Saudi Arabia', dial: '+966' },
+  { code: 'KE', name: 'Kenya', dial: '+254' },
+]
+
 export function StudentProfilePage() {
   const { updateUser } = useAuth()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [country, setCountry] = useState('')
   const [address, setAddress] = useState('')
   const [password, setPassword] = useState('')
 
@@ -65,6 +99,7 @@ export function StudentProfilePage() {
         setFullName(student.fullName)
         setEmail(student.email)
         setPhone(student.phone || '')
+        setCountry(student.country || '')
         setAddress(student.address || '')
         setCurrentStatusCityState(student.currentStatusCityState || '')
         setVisaStatus(student.visaStatus || '')
@@ -132,6 +167,7 @@ export function StudentProfilePage() {
       const payload: Record<string, any> = {
         fullName,
         phone,
+        country,
         address,
         currentStatusCityState,
         visaStatus,
@@ -190,11 +226,50 @@ export function StudentProfilePage() {
             <Input label="Email" type="email" value={email} disabled className="bg-slate-50 cursor-not-allowed" />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-slate-700">
+                Country *
+              </label>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                required
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+              >
+                <option value="">Select your country</option>
+                {COUNTRY_OPTIONS.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-slate-700">
+                Contact Number *
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center rounded-l-lg border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-500">
+                  {country
+                    ? COUNTRY_OPTIONS.find((c) => c.code === country)?.dial || '—'
+                    : '—'}
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder={country === 'US' ? '(555) 019-2834' : 'Enter phone number'}
+                  required
+                  className="block w-full rounded-r-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input
-              label="US Contact Number *"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              label="Current Location / City, State *"
+              value={currentStatusCityState}
+              onChange={(e) => setCurrentStatusCityState(e.target.value)}
               required
             />
             <Input
@@ -204,12 +279,6 @@ export function StudentProfilePage() {
               onChange={(e) => setDateOfBirth(e.target.value)}
             />
           </div>
-          <Input
-            label="Current Status / City, State (ST) *"
-            value={currentStatusCityState}
-            onChange={(e) => setCurrentStatusCityState(e.target.value)}
-            required
-          />
           <Textarea
             label="Address"
             value={address}
@@ -346,7 +415,7 @@ export function StudentProfilePage() {
               required
             />
             <Input
-              label="Preferred Locations (US/CA) *"
+              label="Preferred Locations *"
               value={preferredLocations}
               onChange={(e) => setPreferredLocations(e.target.value)}
               required

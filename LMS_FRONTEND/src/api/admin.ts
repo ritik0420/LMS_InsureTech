@@ -79,3 +79,47 @@ export async function uploadCertificate(
   )
   return data.certificate
 }
+
+// Manager management
+
+export async function listManagers() {
+  const data = await apiRequest<{ managers: User[] }>('/admin/managers')
+  return data.managers
+}
+
+export async function createManager(payload: {
+  fullName: string
+  email: string
+  password: string
+  phone?: string
+  address?: string
+}) {
+  const data = await apiRequest<{ message: string; manager: User }>(
+    '/admin/managers',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  )
+  return data.manager
+}
+
+export async function getManager(id: string) {
+  const data = await apiRequest<{ manager: User }>(`/admin/managers/${id}`)
+  return data.manager
+}
+
+export async function assignStudentToManager(managerId: string, studentId: string) {
+  return apiRequest<{ message: string }>(
+    `/admin/managers/${managerId}/assign/${studentId}`,
+    { method: 'POST' },
+  )
+}
+
+export async function unassignStudentFromManager(managerId: string, studentId: string) {
+  return apiRequest<{ message: string }>(
+    `/admin/managers/${managerId}/assign/${studentId}`,
+    { method: 'DELETE' },
+  )
+}
+

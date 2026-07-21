@@ -169,6 +169,7 @@ export function AdminStudentDetailPage() {
       {error && <Alert variant="error" onClose={() => setError('')}>{error}</Alert>}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <InfoCard label="Country" value={student.country || '—'} />
         <InfoCard label="Phone" value={student.phone || '—'} />
         <InfoCard label="Address" value={student.address || '—'} />
         <InfoCard
@@ -203,7 +204,11 @@ export function AdminStudentDetailPage() {
               <p className="mt-1 text-sm font-medium text-slate-800">{student.fullName || '—'}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">US Contact Number</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Country</p>
+              <p className="mt-1 text-sm font-medium text-slate-800">{student.country || '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Contact Number</p>
               <p className="mt-1 text-sm font-medium text-slate-800">{student.phone || '—'}</p>
             </div>
             <div>

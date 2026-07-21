@@ -1,5 +1,5 @@
 import { CheckCircle2, Eye, EyeOff, Lock, Mail, UserRound, Users, X } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
 
@@ -13,7 +13,13 @@ const initialFormData = {
 
 export function LandingPage() {
   const navigate = useNavigate()
-  const { signup } = useAuth()
+  const { signup, user, isAuthenticated } = useAuth()
+
+  if (isAuthenticated && user) {
+    if (user.role === 'ADMIN') return <Navigate to="/admin" replace />
+    if (user.role === 'MANAGER') return <Navigate to="/manager" replace />
+    return <Navigate to="/student" replace />
+  }
   const [showSignupForm, setShowSignupForm] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)

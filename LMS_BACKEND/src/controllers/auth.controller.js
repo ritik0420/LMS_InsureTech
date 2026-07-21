@@ -119,10 +119,12 @@ const login = async (req, res, requiredRole) => {
 };
 
 const adminLogin = (req, res) => login(req, res, "ADMIN");
+const managerLogin = (req, res) => login(req, res, "MANAGER");
 const studentLogin = (req, res) => login(req, res, "STUDENT");
 
 module.exports = {
   adminLogin,
+  managerLogin,
   studentLogin,
   registerStudent
 };

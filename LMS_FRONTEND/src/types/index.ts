@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'STUDENT'
+export type Role = 'ADMIN' | 'MANAGER' | 'STUDENT'
 
 export interface User {
   id?: string
@@ -7,6 +7,7 @@ export interface User {
   email: string
   role: Role
   phone?: string
+  country?: string
   address?: string
   isActive?: boolean
   documents?: Document[]

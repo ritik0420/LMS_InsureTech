@@ -6,16 +6,28 @@ interface ProtectedRouteProps {
   role: Role
 }
 
+function getLoginPath(role: Role) {
+  if (role === 'ADMIN') return '/admin/login'
+  if (role === 'MANAGER') return '/manager/login'
+  return '/student/login'
+}
+
+function getHomePath(role: Role) {
+  if (role === 'ADMIN') return '/admin'
+  if (role === 'MANAGER') return '/manager'
+  return '/student'
+}
+
 export function ProtectedRoute({ role }: ProtectedRouteProps) {
   const { user, isAuthenticated } = useAuth()
   const location = useLocation()
 
   if (!isAuthenticated || !user) {
-    return <Navigate to={role === 'ADMIN' ? '/admin/login' : '/student/login'} replace />
+    return <Navigate to={getLoginPath(role)} replace />
   }
 
   if (user.role !== role) {
-    return <Navigate to={user.role === 'ADMIN' ? '/admin' : '/student'} replace />
+    return <Navigate to={getHomePath(user.role)} replace />
   }
 
   if (role === 'STUDENT') {
@@ -29,3 +41,4 @@ export function ProtectedRoute({ role }: ProtectedRouteProps) {
 
   return <Outlet />
 }
+
