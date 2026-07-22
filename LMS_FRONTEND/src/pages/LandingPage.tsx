@@ -84,18 +84,31 @@ export function LandingPage() {
               ))}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                { value: '24/7', label: 'Access' },
-                { value: '100%', label: 'Digital records' },
-                { value: '3x', label: 'Faster onboarding' },
-              ].map(item => (
-                <div key={item.label} className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4">
-                  <div className="text-2xl font-semibold text-slate-900">{item.value}</div>
-                  <div className="mt-1 text-sm text-slate-600">{item.label}</div>
-                </div>
-              ))}
+            {/* UNIFIED CONTAINER ON MOBILE | ORIGINAL 3 CARDS ON DESKTOP */}
+            <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4 sm:border-0 sm:bg-transparent sm:p-0">
+              <div className="grid grid-cols-3 divide-x divide-cyan-200/60 sm:gap-4 sm:divide-x-0">
+                {[
+                  { value: '24/7', label: 'Access' },
+                  { value: '100%', label: 'Digital records' },
+                  { value: '3x', label: 'Faster onboarding' },
+                ].map((item, idx) => (
+                  <div
+                    key={item.label}
+                    className={`text-center ${
+                      idx === 0
+                        ? 'pr-2 sm:pr-0'
+                        : idx === 2
+                        ? 'pl-2 sm:pl-0'
+                        : 'px-2 sm:px-0'
+                    } sm:rounded-2xl sm:border sm:border-cyan-100 sm:bg-cyan-50 sm:p-4 sm:text-left`}
+                  >
+                    <div className="text-xl font-bold text-slate-900 sm:text-2xl">{item.value}</div>
+                    <div className="mt-1 text-xs text-slate-600 sm:text-sm">{item.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
+
           </div>
 
           <div className="relative">
