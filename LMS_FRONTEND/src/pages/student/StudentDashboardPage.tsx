@@ -1,4 +1,4 @@
-import { Award, FileText, User } from 'lucide-react'
+import { Award, FileText, User, type LucideIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getProfile } from '../../api/student'
@@ -42,28 +42,31 @@ export function StudentDashboardPage() {
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <DashboardCard
-          icon={User}
-          title="Profile"
-          description="Update your personal information"
-          to="/student/profile"
-          color="brand"
-        />
-        <DashboardCard
-          icon={FileText}
-          title="Documents"
-          description={`${docCount} document${docCount !== 1 ? 's' : ''} uploaded`}
-          to="/student/documents"
-          color="cyan"
-        />
-        <DashboardCard
-          icon={Award}
-          title="Certificates"
-          description={`${certCount} certificate${certCount !== 1 ? 's' : ''} available`}
-          to="/student/certificates"
-          color="emerald"
-        />
+      {/* HORIZONTAL SINGLE ROW FOR BOTH MOBILE & DESKTOP */}
+      <div className="rounded-xl border border-slate-200 bg-white p-2 shadow-sm sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <DashboardCard
+            icon={User}
+            title="Profile"
+            description="Update your personal information"
+            to="/student/profile"
+            color="brand"
+          />
+          <DashboardCard
+            icon={FileText}
+            title="Documents"
+            description={`${docCount} uploaded`}
+            to="/student/documents"
+            color="cyan"
+          />
+          <DashboardCard
+            icon={Award}
+            title="Certificates"
+            description={`${certCount} available`}
+            to="/student/certificates"
+            color="emerald"
+          />
+        </div>
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -101,7 +104,7 @@ function DashboardCard({
   to,
   color,
 }: {
-  icon: typeof User
+  icon: LucideIcon
   title: string
   description: string
   to: string
@@ -116,13 +119,13 @@ function DashboardCard({
   return (
     <Link
       to={to}
-      className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+      className="group block rounded-lg p-2.5 transition hover:bg-slate-50 sm:rounded-xl sm:border sm:border-slate-200 sm:bg-white sm:p-5 sm:shadow-sm sm:hover:border-slate-300 sm:hover:shadow-md sm:hover:bg-white"
     >
-      <div className={`mb-3 inline-flex rounded-lg p-2.5 transition ${colors[color]}`}>
-        <Icon className="h-5 w-5" />
+      <div className={`mb-2 inline-flex rounded-lg p-2 transition sm:mb-3 sm:p-2.5 ${colors[color]}`}>
+        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
       </div>
-      <h3 className="font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 text-sm text-slate-500">{description}</p>
+      <h3 className="text-xs font-semibold text-slate-900 sm:text-base">{title}</h3>
+      <p className="mt-0.5 text-[11px] text-slate-500 sm:mt-1 sm:text-sm">{description}</p>
     </Link>
   )
 }

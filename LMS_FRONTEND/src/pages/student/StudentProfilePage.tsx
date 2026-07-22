@@ -198,9 +198,9 @@ export function StudentProfilePage() {
   if (loading) return <Spinner />
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl px-4 py-6 sm:px-0 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
+        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">My Profile</h1>
         <p className="mt-1 text-sm text-slate-500">
           View and update your personal, visa, and professional details.
         </p>
@@ -209,11 +209,11 @@ export function StudentProfilePage() {
       {error && <Alert variant="error" onClose={() => setError('')}>{error}</Alert>}
       {success && <Alert variant="success" onClose={() => setSuccess('')}>{success}</Alert>}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         
         {/* Section 1: Personal Info */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-          <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
+          <h3 className="text-base font-semibold text-slate-800 border-b border-slate-100 pb-2 sm:text-lg">
             1. Personal & Contact Details
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -296,8 +296,8 @@ export function StudentProfilePage() {
         </div>
 
         {/* Section 2: Visa & Resume */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-          <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
+          <h3 className="text-base font-semibold text-slate-800 border-b border-slate-100 pb-2 sm:text-lg">
             2. Visa & Resume Details
           </h3>
           
@@ -331,33 +331,42 @@ export function StudentProfilePage() {
               Resume Document
             </label>
             {resumeFile ? (
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-cyan-100 p-2 text-cyan-600">
+              <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
+                
+                {/* File Info Box */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="shrink-0 rounded-lg bg-cyan-100 p-2 text-cyan-600">
                     <FileText className="h-5 w-5" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">{resumeFile.originalName}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-slate-900" title={resumeFile.originalName}>
+                      {resumeFile.originalName}
+                    </p>
                     <p className="text-xs text-slate-500">
-                      Uploaded on {new Date(resumeFile.createdAt).toLocaleDateString()}
+                      {resumeFile.createdAt && !isNaN(new Date(resumeFile.createdAt).getTime())
+                        ? `Uploaded on ${new Date(resumeFile.createdAt).toLocaleDateString()}`
+                        : 'Uploaded'}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+
+                {/* Action Buttons Box */}
+                <div className="flex items-center gap-2 pt-1 border-t border-slate-200/60 sm:border-t-0 sm:pt-0 shrink-0">
                   <Button
                     type="button"
                     variant="secondary"
                     size="sm"
                     onClick={handleDownloadResume}
-                    className="flex items-center gap-1"
+                    className="flex flex-1 items-center justify-center gap-1.5 px-3 py-1.5 text-xs sm:flex-initial"
                   >
-                    <Download className="h-4 w-4" />
-                    Download
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Download</span>
                   </Button>
-                  <label className="cursor-pointer">
-                    <span className="inline-flex items-center gap-1 justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition">
+
+                  <label className="flex-1 cursor-pointer sm:flex-initial">
+                    <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100">
                       <Upload className="h-3.5 w-3.5" />
-                      Replace
+                      <span>Replace</span>
                     </span>
                     <input
                       type="file"
@@ -368,9 +377,10 @@ export function StudentProfilePage() {
                     />
                   </label>
                 </div>
+
               </div>
             ) : (
-              <div className="flex justify-center rounded-xl border border-dashed border-slate-300 px-6 py-4">
+              <div className="flex justify-center rounded-xl border border-dashed border-slate-300 px-4 py-4 sm:px-6">
                 <label className="cursor-pointer text-center">
                   <Upload className="mx-auto h-8 w-8 text-slate-400" />
                   <span className="mt-1 block text-sm font-semibold text-cyan-600">Upload Resume</span>
@@ -403,8 +413,8 @@ export function StudentProfilePage() {
         </div>
 
         {/* Section 3: Job Preferences */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-          <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
+          <h3 className="text-base font-semibold text-slate-800 border-b border-slate-100 pb-2 sm:text-lg">
             3. Job Preferences
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -423,10 +433,10 @@ export function StudentProfilePage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-slate-700 font-semibold">
+            <label className="block text-sm font-medium text-slate-700">
               Open to Relocation? *
             </label>
-            <div className="flex gap-4">
+            <div className="flex gap-3 sm:gap-4">
               {['Yes', 'No'].map((option) => (
                 <label
                   key={option}
@@ -454,13 +464,13 @@ export function StudentProfilePage() {
             <label className="block text-sm font-medium text-slate-700">
               Preferred Job Type *
             </label>
-            <div className="grid gap-2 grid-cols-2 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {JOB_TYPE_OPTIONS.map((option) => {
                 const isChecked = preferredJobType.includes(option)
                 return (
                   <label
                     key={option}
-                    className={`flex items-center gap-2 rounded-lg border p-2 cursor-pointer transition hover:bg-slate-50 ${
+                    className={`flex items-center gap-2 rounded-lg border p-2.5 cursor-pointer transition hover:bg-slate-50 ${
                       isChecked
                         ? 'border-cyan-500 bg-cyan-50/20'
                         : 'border-slate-200 bg-white'
@@ -495,8 +505,8 @@ export function StudentProfilePage() {
           </div>
         </div>
 
-        <div className="flex gap-4">
-          <Button type="submit" loading={submitting} className="flex-1 bg-cyan-600 hover:bg-cyan-700">
+        <div className="flex gap-4 pt-2">
+          <Button type="submit" loading={submitting} className="w-full bg-cyan-600 hover:bg-cyan-700 py-3 text-base">
             Save Profile Changes
           </Button>
         </div>
