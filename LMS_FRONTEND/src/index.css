@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./styles/auth.css";
+@import "./styles/landing.css";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;

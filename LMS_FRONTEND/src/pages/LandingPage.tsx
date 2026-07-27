@@ -1,6 +1,15 @@
-import { CheckCircle2, Eye, EyeOff, Lock, Mail, UserRound, Users, X } from 'lucide-react'
+import {
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Users,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+} from 'lucide-react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 const initialFormData = {
@@ -10,6 +19,34 @@ const initialFormData = {
   password: '',
   confirmPassword: '',
 }
+
+/* ── Testimonials (same data as AuthLayout for consistency) ── */
+const testimonials = [
+  {
+    quote:
+      'Cloud DevOps support was exceptional with a successful result.',
+    name: 'Celestine Ndip',
+    role: '2 reviews',
+    company: '5 months ago',
+    rating: 5,
+  },
+  {
+    quote:
+      'My experience with the InsureTech Skills classes for cyber security has been positive. The sessions are practical, well-structured, and focused on real-world applications.',
+    name: 'Derrick Enohnyaket',
+    role: '1 review',
+    company: '5 months ago',
+    rating: 5,
+  },
+  {
+    quote:
+      'Great team! I have had a great experience so far with AWS Solutions Architecture. They are flexible, supportive, and professional. I highly recommend them.',
+    name: 'TCHINDRO SOSSA',
+    role: '5 reviews',
+    company: '2 months ago',
+    rating: 5,
+  },
+]
 
 export function LandingPage() {
   const navigate = useNavigate()
@@ -26,6 +63,14 @@ export function LandingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [formData, setFormData] = useState(initialFormData)
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -62,336 +107,270 @@ export function LandingPage() {
     }
   }
 
-  const highlights = ['Student onboarding', 'Document tracking', 'Instant certificates']
+  const testimonial = testimonials[currentTestimonial]
+
+
+
+  /* ── Shared signup form markup ── */
+  const signupForm = (
+    <form onSubmit={handleSubmit}>
+      {/* Name row */}
+      <div className="landing-name-row">
+        <div className="auth-field">
+          <label htmlFor="signup-firstName" className="auth-field-label">
+            First name
+          </label>
+          <div className="auth-field-input-wrapper">
+            <input
+              id="signup-firstName"
+              type="text"
+              name="firstName"
+              className="auth-field-input"
+              placeholder="John"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        </div>
+        <div className="auth-field">
+          <label htmlFor="signup-lastName" className="auth-field-label">
+            Last name
+          </label>
+          <div className="auth-field-input-wrapper">
+            <input
+              id="signup-lastName"
+              type="text"
+              name="lastName"
+              className="auth-field-input"
+              placeholder="Doe"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Email */}
+      <div className="auth-field">
+        <label htmlFor="signup-email" className="auth-field-label">
+          Email
+        </label>
+        <div className="auth-field-input-wrapper">
+          <input
+            id="signup-email"
+            type="email"
+            name="email"
+            className="auth-field-input"
+            placeholder="e.g. ahmed@alkheerow.com"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+      </div>
+
+      {/* Password */}
+      <div className="auth-field">
+        <label htmlFor="signup-password" className="auth-field-label">
+          Password
+        </label>
+        <div className="auth-field-input-wrapper">
+          <input
+            id="signup-password"
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            className="auth-field-input"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+            style={{ paddingRight: '2.75rem' }}
+          />
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() => setShowPassword(prev => !prev)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Confirm Password */}
+      <div className="auth-field">
+        <label htmlFor="signup-confirmPassword" className="auth-field-label">
+          Confirm password
+        </label>
+        <div className="auth-field-input-wrapper">
+          <input
+            id="signup-confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPassword"
+            className="auth-field-input"
+            placeholder="••••••••"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            required
+            style={{ paddingRight: '2.75rem' }}
+          />
+          <button
+            type="button"
+            className="auth-password-toggle"
+            onClick={() => setShowConfirmPassword(prev => !prev)}
+            aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+          >
+            {showConfirmPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+          </button>
+        </div>
+      </div>
+
+      {submitMessage && (
+        <div className={submitMessage.type === 'error' ? 'auth-error' : 'landing-success-msg'}>
+          {submitMessage.type === 'error' ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
+          <span>{submitMessage.text}</span>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        className="auth-submit-btn"
+        disabled={isSubmitting}
+      >
+        {isSubmitting && <span className="auth-spinner" />}
+        {isSubmitting ? 'Creating account...' : 'Create an account'}
+      </button>
+
+      <p className="auth-footer">
+        Already have an account?{' '}
+        <Link to="/student/login">Log in</Link>
+      </p>
+    </form>
+  )
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <section className="relative overflow-hidden bg-white px-4 pt-4 pb-12 sm:px-6 sm:pt-6 lg:px-8 lg:pt-8 lg:pb-16">
-        <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="max-w-2xl">
+    <div className="landing-page">
+      {/* ═══════════════  HERO ═══════════════ */}
+      <section className="landing-hero">
+        {/* ── Left Panel (blue gradient) ── */}
+        <div className="landing-hero-left">
+
+          {/* Globe */}
+          <div className="auth-globe-container">
+            <img
+              src="/globe_illustration.png"
+              alt="Global Network"
+              className="auth-globe-image"
+            />
+            <div className="auth-floating-avatar auth-avatar-1">
+              <svg viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
+                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
+              </svg>
+            </div>
+            <div className="auth-floating-avatar auth-avatar-2">
+              <svg viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
+                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
+              </svg>
+            </div>
+            <div className="auth-floating-avatar auth-avatar-3">
+              <svg viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
+                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
+              </svg>
+            </div>
+            <div className="auth-connection-dot auth-dot-1" />
+            <div className="auth-connection-dot auth-dot-2" />
+            <div className="auth-connection-dot auth-dot-3" />
+          </div>
+
+          {/* Testimonial */}
+          <div className="auth-testimonial">
+            <p className="auth-testimonial-quote">
+              &ldquo;{testimonial.quote}&rdquo;
+            </p>
+            <div className="auth-testimonial-footer">
+              <div className="auth-testimonial-info">
+                <p className="auth-testimonial-name">{testimonial.name}</p>
+                <p className="auth-testimonial-role">{testimonial.role}</p>
+                <p className="auth-testimonial-company">{testimonial.company}</p>
+              </div>
+              <div className="auth-testimonial-rating">
+                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                  <Star key={i} className="auth-star" />
+                ))}
+              </div>
+            </div>
+            <div className="auth-testimonial-nav">
+              <button
+                type="button"
+                onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+                className="auth-nav-btn"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="auth-nav-icon" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
+                className="auth-nav-btn"
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="auth-nav-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right Panel (form) ── */}
+        <div className="landing-hero-right">
+          <div className="landing-hero-form-wrap">
+            {/* Logo */}
             <img
               src="/insuretech logo (1).png"
-              alt="InsureTech Skills logo"
-              className="mb-4 h-20 w-20 rounded-xl object-cover object-center sm:h-24 sm:w-24"
+              alt="InsureTech Logo"
+              className="auth-form-logo"
             />
-            <h2 className="mb-4 font-black leading-tight tracking-tight text-slate-900 sm:text-2xl lg:text-2xl">
-              Manage learners and credentials in one polished experience.
-            </h2>
-            <p className="mb-6 max-w-xl text-lg leading-8 text-slate-600">
-              A modern LMS for InsureTech programs where admins stay organized and students can access their profile, documents, and certificates smoothly.
+
+            <h1 className="auth-form-title">Create Account</h1>
+            <p className="auth-form-subtitle">
+              Your informations are secure and will not be shared with anyone
             </p>
 
-            <div className="mb-8 flex flex-wrap gap-3">
-              {highlights.map(item => (
-                <span key={item} className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-medium text-cyan-700">
-                  <CheckCircle2 className="h-4 w-4" />
-                  {item}
-                </span>
-              ))}
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                { value: '24/7', label: 'Access' },
-                { value: '100%', label: 'Digital records' },
-                { value: '3x', label: 'Faster onboarding' },
-              ].map(item => (
-                <div key={item.label} className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4">
-                  <div className="text-2xl font-semibold text-slate-900">{item.value}</div>
-                  <div className="mt-1 text-sm text-slate-600">{item.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="rounded-[2rem] border border-cyan-100 bg-white p-6 shadow-[0_20px_60px_rgba(6,182,212,0.12)] sm:p-8">
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">Join now</p>
-                  <h2 className="mt-2 text-2xl font-semibold text-slate-900">Create your student account</h2>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 text-cyan-600">
-                  <Users className="h-6 w-6" />
-                </div>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">First name</label>
-                    <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                      <UserRound className="mr-2 h-4 w-4 text-slate-400" />
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className="w-full bg-transparent text-sm outline-none"
-                        placeholder="John"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700">Last name</label>
-                    <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                      <UserRound className="mr-2 h-4 w-4 text-slate-400" />
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="w-full bg-transparent text-sm outline-none"
-                        placeholder="Doe"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">Email address</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                    <Mail className="mr-2 h-4 w-4 text-slate-400" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full bg-transparent text-sm outline-none"
-                      placeholder="john@example.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">Password</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                    <Lock className="mr-2 h-4 w-4 text-slate-400" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className="w-full bg-transparent text-sm outline-none"
-                      placeholder="••••••••"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(prev => !prev)}
-                      className="ml-2 text-slate-400 transition hover:text-slate-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">Confirm password</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                    <Lock className="mr-2 h-4 w-4 text-slate-400" />
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      className="w-full bg-transparent text-sm outline-none"
-                      placeholder="••••••••"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(prev => !prev)}
-                      className="ml-2 text-slate-400 transition hover:text-slate-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {submitMessage && (
-                  <p className={`text-sm ${submitMessage.type === 'success' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                    {submitMessage.text}
-                  </p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="mt-2 w-full rounded-xl bg-cyan-600 px-4 py-3 font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:bg-cyan-400"
-                >
-                  {isSubmitting ? 'Creating account...' : 'Create Account'}
-                </button>
-
-                <p className="text-center text-sm text-slate-500">
-                  Already have an account?{' '}
-                  <Link to="/student/login" className="font-semibold text-cyan-600 hover:text-cyan-700">
-                    Sign in
-                  </Link>
-                </p>
-              </form>
-            </div>
+            {signupForm}
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-10 sm:py-14">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] border border-cyan-100 bg-cyan-50/70 p-8 shadow-sm">
-            <div className="grid gap-6 md:grid-cols-3">
-              {[
-                { title: 'Simple onboarding', text: 'Guide students through account setup with a calm, modern flow.' },
-                { title: 'Secure records', text: 'Keep documents and approval history in one trusted place.' },
-                { title: 'Professional credentials', text: 'Issue certificates that feel polished and easy to share.' },
-              ].map(item => (
-                <div key={item.title}>
-                  <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ═══════════════  FOOTER ═══════════════ */}
+      <footer className="landing-footer">
+        <p>
+          © {new Date().getFullYear()} InsureTech LMS. Built with precision.
+        </p>
+      </footer>
 
+      {/* ═══════════════  SIGNUP MODAL ═══════════════ */}
       {showSignupForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[2rem] border border-cyan-100 bg-white p-7 shadow-[0_20px_70px_rgba(6,182,212,0.18)] sm:p-8">
-            <div className="mb-6 flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600">Create account</p>
-                <h2 className="mt-2 text-2xl font-bold text-slate-900">Welcome aboard</h2>
-              </div>
-              <button
-                onClick={() => setShowSignupForm(false)}
-                className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
-              >
-                <X className="h-5 w-5" />
-              </button>
+        <div className="landing-modal-overlay" onClick={() => setShowSignupForm(false)}>
+          <div className="landing-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowSignupForm(false)}
+              className="landing-modal-close"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="auth-form-avatar" style={{ marginTop: '0.2rem' }}>
+              <Users />
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">First name</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                    <UserRound className="mr-2 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className="w-full bg-transparent text-sm outline-none"
-                      placeholder="John"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">Last name</label>
-                  <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                    <UserRound className="mr-2 h-4 w-4 text-slate-400" />
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className="w-full bg-transparent text-sm outline-none"
-                      placeholder="Doe"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Email address</label>
-                <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                  <Mail className="mr-2 h-4 w-4 text-slate-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full bg-transparent text-sm outline-none"
-                    placeholder="john@example.com"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Password</label>
-                <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                  <Lock className="mr-2 h-4 w-4 text-slate-400" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="w-full bg-transparent text-sm outline-none"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(prev => !prev)}
-                    className="ml-2 text-slate-400 transition hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Confirm password</label>
-                <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-cyan-500 focus-within:bg-white">
-                  <Lock className="mr-2 h-4 w-4 text-slate-400" />
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="w-full bg-transparent text-sm outline-none"
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(prev => !prev)}
-                    className="ml-2 text-slate-400 transition hover:text-slate-600"
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {submitMessage && (
-                <p className={`text-sm ${submitMessage.type === 'success' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                  {submitMessage.text}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-2 w-full rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 px-4 py-3 font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isSubmitting ? 'Creating account...' : 'Create Account'}
-              </button>
-
-              <p className="text-center text-sm text-slate-500">
-                Already have an account?{' '}
-                <Link to="/student/login" className="font-semibold text-cyan-600 hover:text-cyan-700">
-                  Sign in
-                </Link>
-              </p>
-            </form>
+            <h2 className="auth-form-title">Create Account</h2>
+            <p className="auth-form-subtitle">
+              Your informations are secure and will not be shared with anyone
+            </p>
+            {signupForm}
           </div>
         </div>
       )}
