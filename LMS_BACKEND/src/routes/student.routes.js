@@ -15,7 +15,9 @@ const {
   downloadCertificate,
   onboardStudent,
   downloadResume,
-  updateResume
+  updateResume,
+  listClassLinks,
+  listInvoices
 } = require("../controllers/student.controller");
 
 const studentRouter = Router();
@@ -51,5 +53,9 @@ studentRouter.delete("/documents/:documentId", deleteDocument);
 
 studentRouter.get("/certificates", listCertificates);
 studentRouter.get("/certificates/:certificateId/download", downloadCertificate);
+
+studentRouter.get("/class-links", listClassLinks);
+
+studentRouter.get("/invoices", listInvoices);
 
 module.exports = studentRouter;

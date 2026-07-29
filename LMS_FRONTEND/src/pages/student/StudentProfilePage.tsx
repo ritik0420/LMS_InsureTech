@@ -212,7 +212,7 @@ export function StudentProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-8">
         
         {/* Section 1: Personal Info */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-4 sm:p-6">
           <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
             1. Personal & Contact Details
           </h3>
@@ -296,7 +296,7 @@ export function StudentProfilePage() {
         </div>
 
         {/* Section 2: Visa & Resume */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-4 sm:p-6">
           <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
             2. Visa & Resume Details
           </h3>
@@ -331,13 +331,13 @@ export function StudentProfilePage() {
               Resume Document
             </label>
             {resumeFile ? (
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="rounded-lg bg-cyan-100 p-2 text-cyan-600">
                     <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{resumeFile.originalName}</p>
+                    <p className="text-sm font-medium text-slate-900 break-all">{resumeFile.originalName}</p>
                     <p className="text-xs text-slate-500">
                       Uploaded on {new Date(resumeFile.createdAt).toLocaleDateString()}
                     </p>
@@ -361,7 +361,7 @@ export function StudentProfilePage() {
                     </span>
                     <input
                       type="file"
-                      accept=".pdf,.png,.jpg,.jpeg"
+                      accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
                       className="sr-only"
                       onChange={handleResumeReplace}
                       disabled={resumeReplacing}
@@ -376,7 +376,7 @@ export function StudentProfilePage() {
                   <span className="mt-1 block text-sm font-semibold text-cyan-600">Upload Resume</span>
                   <input
                     type="file"
-                    accept=".pdf,.png,.jpg,.jpeg"
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
                     className="sr-only"
                     onChange={handleResumeReplace}
                   />
@@ -403,7 +403,7 @@ export function StudentProfilePage() {
         </div>
 
         {/* Section 3: Job Preferences */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-4 sm:p-6">
           <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">
             3. Job Preferences
           </h3>

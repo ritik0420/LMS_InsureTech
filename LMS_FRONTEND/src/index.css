@@ -21,6 +21,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -32,4 +37,5 @@ body {
 
 #root {
   min-height: 100vh;
+  overflow-x: hidden;
 }

@@ -142,7 +142,7 @@ export function AdminManagerDetailPage() {
       </div>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-brand-600" />
             <h2 className="text-lg font-semibold text-slate-900">
@@ -165,6 +165,7 @@ export function AdminManagerDetailPage() {
           />
         ) : (
           <div className="overflow-hidden rounded-lg border border-slate-100">
+            <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-100">
               <thead className="bg-slate-50">
                 <tr>
@@ -219,6 +220,7 @@ export function AdminManagerDetailPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </section>

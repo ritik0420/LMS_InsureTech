@@ -13,10 +13,12 @@ import { ManagerLoginPage } from './pages/manager/ManagerLoginPage'
 import { ManagerStudentDetailPage } from './pages/manager/ManagerStudentDetailPage'
 import { ManagerStudentsPage } from './pages/manager/ManagerStudentsPage'
 import { StudentCertificatesPage } from './pages/student/StudentCertificatesPage'
+import { StudentClassLinksPage } from './pages/student/StudentClassLinksPage'
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
 import { StudentDocumentsPage } from './pages/student/StudentDocumentsPage'
 import { StudentLoginPage } from './pages/student/StudentLoginPage'
 import { StudentOnboardingPage } from './pages/student/StudentOnboardingPage'
+import { StudentPaymentsPage } from './pages/student/StudentPaymentsPage'
 import { StudentProfilePage } from './pages/student/StudentProfilePage'
 
 const adminNav = [
@@ -33,6 +35,8 @@ const studentNav = [
   { to: '/student/profile', label: 'Profile' },
   { to: '/student/documents', label: 'Documents' },
   { to: '/student/certificates', label: 'Certificates' },
+  { to: '/student/class-links', label: 'Class Links' },
+  { to: '/student/payments', label: 'Payments' },
 ]
 
 export default function App() {
@@ -83,6 +87,8 @@ export default function App() {
             <Route path="/student/profile" element={<StudentProfilePage />} />
             <Route path="/student/documents" element={<StudentDocumentsPage />} />
             <Route path="/student/certificates" element={<StudentCertificatesPage />} />
+            <Route path="/student/class-links" element={<StudentClassLinksPage />} />
+            <Route path="/student/payments" element={<StudentPaymentsPage />} />
           </Route>
         </Route>
 

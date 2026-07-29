@@ -127,48 +127,50 @@ export function AdminManagersPage() {
         />
       ) : (
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Manager
-                </th>
-                <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell">
-                  Phone
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Assigned Students
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.map((manager) => (
-                <tr key={getUserId(manager)} className="hover:bg-slate-50/80">
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-slate-900">{manager.fullName}</p>
-                    <p className="text-sm text-slate-500">{manager.email}</p>
-                  </td>
-                  <td className="hidden px-4 py-3 text-sm text-slate-600 sm:table-cell">
-                    {manager.phone || '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
-                      {(manager as any).assignedStudents?.length ?? 0} students
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      to={`/admin/managers/${getUserId(manager)}`}
-                      className="text-sm font-medium text-brand-600 hover:text-brand-700"
-                    >
-                      View
-                    </Link>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Manager
+                  </th>
+                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell">
+                    Phone
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Assigned Students
+                  </th>
+                  <th className="px-4 py-3" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((manager) => (
+                  <tr key={getUserId(manager)} className="hover:bg-slate-50/80">
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-slate-900">{manager.fullName}</p>
+                      <p className="text-sm text-slate-500 break-all">{manager.email}</p>
+                    </td>
+                    <td className="hidden px-4 py-3 text-sm text-slate-600 sm:table-cell">
+                      {manager.phone || '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
+                        {(manager as any).assignedStudents?.length ?? 0} students
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        to={`/admin/managers/${getUserId(manager)}`}
+                        className="text-sm font-medium text-brand-600 hover:text-brand-700"
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

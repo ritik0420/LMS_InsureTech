@@ -351,6 +351,30 @@ const downloadCertificate = async (req, res) => {
   }
 };
 
+const listClassLinks = async (req, res) => {
+  try {
+    const student = await User.findById(req.user._id).select("classLinks");
+    return res.status(200).json({ classLinks: student.classLinks });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch class links",
+      error: error.message
+    });
+  }
+};
+
+const listInvoices = async (req, res) => {
+  try {
+    const student = await User.findById(req.user._id).select("invoices");
+    return res.status(200).json({ invoices: student.invoices });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch invoices",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -361,5 +385,7 @@ module.exports = {
   downloadCertificate,
   onboardStudent,
   downloadResume,
-  updateResume
+  updateResume,
+  listClassLinks,
+  listInvoices
 };

@@ -1,5 +1,5 @@
 import { apiRequest, downloadFile } from './client'
-import type { Certificate, Document, User } from '../types'
+import type { Certificate, ClassLink, Document, Invoice, User } from '../types'
 
 export async function getProfile() {
   const data = await apiRequest<{ student: User }>('/student/profile')
@@ -104,3 +104,16 @@ export async function downloadCertificate(
     filename,
   )
 }
+
+export async function listClassLinks() {
+  const data = await apiRequest<{ classLinks: ClassLink[] }>(
+    '/student/class-links',
+  )
+  return data.classLinks
+}
+
+export async function listInvoices() {
+  const data = await apiRequest<{ invoices: Invoice[] }>('/student/invoices')
+  return data.invoices
+}
+

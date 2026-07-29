@@ -99,7 +99,7 @@ export function ManagerStudentDetailPage() {
       </div>
 
       {student.isOnboarded ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-6 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4">
             <div>
               <h2 className="text-lg font-bold text-slate-900">Job Application Profile</h2>
@@ -194,7 +194,7 @@ export function ManagerStudentDetailPage() {
         </section>
       )}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex items-center gap-2">
           <Award className="h-5 w-5 text-brand-600" />
           <h2 className="text-lg font-semibold text-slate-900">Certificates</h2>
@@ -208,8 +208,8 @@ export function ManagerStudentDetailPage() {
         ) : (
           <ul className="divide-y divide-slate-100">
             {student.certificates.map((cert) => (
-              <li key={cert._id} className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
+              <li key={cert._id} className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="rounded-lg bg-brand-50 p-2 text-brand-600">
                     <FileText className="h-4 w-4" />
                   </div>
@@ -225,7 +225,7 @@ export function ManagerStudentDetailPage() {
                   size="sm"
                   variant="secondary"
                   onClick={() => handleDownloadCertificate(cert._id, cert.originalName)}
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 self-start sm:self-auto shrink-0"
                 >
                   <Download className="h-4 w-4" />
                   Download
@@ -236,7 +236,7 @@ export function ManagerStudentDetailPage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex items-center gap-2">
           <FileText className="h-5 w-5 text-slate-500" />
           <h2 className="text-lg font-semibold text-slate-900">
@@ -250,8 +250,8 @@ export function ManagerStudentDetailPage() {
         ) : (
           <ul className="divide-y divide-slate-100">
             {student.documents.map((doc) => (
-              <li key={doc._id} className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
+              <li key={doc._id} className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="rounded-lg bg-slate-50 p-2 text-slate-600">
                     <FileText className="h-4 w-4" />
                   </div>
@@ -266,7 +266,7 @@ export function ManagerStudentDetailPage() {
                   size="sm"
                   variant="secondary"
                   onClick={() => handleDownloadDocument(doc._id, doc.originalName)}
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 self-start sm:self-auto shrink-0"
                 >
                   <Download className="h-4 w-4" />
                   Download

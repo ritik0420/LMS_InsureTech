@@ -508,6 +508,179 @@ const unassignStudentFromManager = async (req, res) => {
   }
 };
 
+const addClassLink = async (req, res) => {
+  try {
+    const { title, url, description } = req.body;
+
+    if (!title || !url) {
+      return res.status(400).json({ message: "Title and URL are required" });
+    }
+
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    student.classLinks.push({ title, url, description: description || "" });
+    await student.save();
+
+    const classLink = student.classLinks[student.classLinks.length - 1];
+
+    return res.status(201).json({
+      message: "Class link added successfully",
+      classLink
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to add class link",
+      error: error.message
+    });
+  }
+};
+
+const deleteClassLink = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const link = student.classLinks.id(req.params.linkId);
+    if (!link) {
+      return res.status(404).json({ message: "Class link not found" });
+    }
+
+    link.deleteOne();
+    await student.save();
+
+    return res.status(200).json({ message: "Class link deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to delete class link",
+      error: error.message
+    });
+  }
+};
+
+const addInvoice = async (req, res) => {
+  try {
+    const { title, amount, currency, description, status, dueDate, paymentLink } = req.body;
+
+    if (!title || amount === undefined || amount === null) {
+      return res.status(400).json({ message: "Title and amount are required" });
+    }
+
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    student.invoices.push({
+      title,
+      amount,
+      currency: currency || "USD",
+      description: description || "",
+      status: status || "Pending",
+      dueDate: dueDate ? new Date(dueDate) : null,
+      paymentLink: paymentLink || ""
+    });
+
+    await student.save();
+
+    const invoice = student.invoices[student.invoices.length - 1];
+
+    return res.status(201).json({
+      message: "Invoice added successfully",
+      invoice
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to add invoice",
+      error: error.message
+    });
+  }
+};
+
+const updateInvoice = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const invoice = student.invoices.id(req.params.invoiceId);
+    if (!invoice) {
+      return res.status(404).json({ message: "Invoice not found" });
+    }
+
+    const { title, amount, currency, description, status, dueDate, paymentLink } = req.body;
+
+    if (title !== undefined) invoice.title = title;
+    if (amount !== undefined) invoice.amount = amount;
+    if (currency !== undefined) invoice.currency = currency;
+    if (description !== undefined) invoice.description = description;
+    if (status !== undefined) invoice.status = status;
+    if (dueDate !== undefined) invoice.dueDate = dueDate ? new Date(dueDate) : null;
+    if (paymentLink !== undefined) invoice.paymentLink = paymentLink;
+
+    await student.save();
+
+    return res.status(200).json({
+      message: "Invoice updated successfully",
+      invoice
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to update invoice",
+      error: error.message
+    });
+  }
+};
+
+const deleteInvoice = async (req, res) => {
+  try {
+    const student = await User.findOne({
+      _id: req.params.id,
+      role: "STUDENT"
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const invoice = student.invoices.id(req.params.invoiceId);
+    if (!invoice) {
+      return res.status(404).json({ message: "Invoice not found" });
+    }
+
+    invoice.deleteOne();
+    await student.save();
+
+    return res.status(200).json({ message: "Invoice deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to delete invoice",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createStudent,
   listStudents,
@@ -523,6 +696,11 @@ module.exports = {
   createManager,
   getManager,
   assignStudentToManager,
-  unassignStudentFromManager
+  unassignStudentFromManager,
+  addClassLink,
+  deleteClassLink,
+  addInvoice,
+  updateInvoice,
+  deleteInvoice
 };
 

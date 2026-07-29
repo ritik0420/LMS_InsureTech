@@ -7,6 +7,27 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { ArrowRight, ArrowLeft, Upload, Check, LogOut } from 'lucide-react'
 
+const TIMEZONE_OPTIONS = [
+  'America/New_York (EST/EDT)',
+  'America/Chicago (CST/CDT)',
+  'America/Denver (MST/MDT)',
+  'America/Los_Angeles (PST/PDT)',
+  'America/Anchorage (AKST/AKDT)',
+  'Pacific/Honolulu (HST)',
+  'America/Toronto (EST/EDT)',
+  'America/Vancouver (PST/PDT)',
+  'Europe/London (GMT/BST)',
+  'Europe/Berlin (CET/CEST)',
+  'Europe/Paris (CET/CEST)',
+  'Asia/Kolkata (IST)',
+  'Asia/Dubai (GST)',
+  'Asia/Singapore (SGT)',
+  'Asia/Tokyo (JST)',
+  'Asia/Shanghai (CST)',
+  'Australia/Sydney (AEST/AEDT)',
+  'Pacific/Auckland (NZST/NZDT)',
+]
+
 const VISA_STATUS_OPTIONS = [
   'US Citizen',
   'Green Card Holder',
@@ -85,6 +106,10 @@ export function StudentOnboardingPage() {
   const [preferredJobType, setPreferredJobType] = useState<string[]>([])
   const [expectedSalaryPeriod, setExpectedSalaryPeriod] = useState('')
   const [securityClearance, setSecurityClearance] = useState('')
+  const [programName, setProgramName] = useState('')
+  const [preferTime, setPreferTime] = useState('')
+  const [preferDate, setPreferDate] = useState('')
+  const [timeZone, setTimeZone] = useState('')
 
   const handleJobTypeChange = (option: string, checked: boolean) => {
     if (checked) {
@@ -111,9 +136,13 @@ export function StudentOnboardingPage() {
     setError('')
     if (currentStep === 1) {
       if (!fullName.trim()) return 'Full Legal Name is required'
+      if (!programName.trim()) return 'Program Name is required'
       if (!country) return 'Country is required'
       if (!phone.trim()) return 'Contact Number is required'
       if (!currentStatusCityState.trim()) return 'Current Status / City, State is required'
+      if (!timeZone) return 'Time Zone is required'
+      if (!preferDate) return 'Preferred Date is required'
+      if (!preferTime) return 'Preferred Time is required'
     } else if (currentStep === 2) {
       if (!visaStatus) return 'Current Visa Status is required'
       if (!resume) return 'Resume upload is required'
@@ -177,6 +206,10 @@ export function StudentOnboardingPage() {
     formData.append('preferredJobType', JSON.stringify(preferredJobType))
     formData.append('expectedSalaryPeriod', expectedSalaryPeriod)
     formData.append('securityClearance', securityClearance)
+    formData.append('programName', programName)
+    formData.append('preferTime', preferTime)
+    formData.append('preferDate', preferDate)
+    formData.append('timeZone', timeZone)
 
     try {
       const updatedUser = await onboardStudent(formData)
@@ -190,7 +223,7 @@ export function StudentOnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col bg-slate-50 px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Logout Button */}
       <div className="fixed top-4 right-4 z-50 sm:absolute sm:top-6 sm:right-6">
         <button
@@ -223,12 +256,12 @@ export function StudentOnboardingPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100 sm:p-8">
+        <div className="max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100 sm:p-8">
           
           {/* Progress Indicator */}
           <div className="mb-8">
-            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <span className={step >= 1 ? 'text-cyan-600' : ''}>1. Contact & Personal</span>
+            <div className="flex items-center justify-between gap-2 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 sm:text-xs sm:tracking-wider">
+              <span className={step >= 1 ? 'text-cyan-600' : ''}>1. Contact</span>
               <span className={step >= 2 ? 'text-cyan-600' : ''}>2. Visa & Resume</span>
               <span className={step >= 3 ? 'text-cyan-600' : ''}>3. Preferences</span>
             </div>
@@ -259,6 +292,13 @@ export function StudentOnboardingPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="John Fitzgerald Doe"
+                  required
+                />
+                <Input
+                  label="Program Name *"
+                  value={programName}
+                  onChange={(e) => setProgramName(e.target.value)}
+                  placeholder="e.g. InsureTech Certification Program"
                   required
                 />
                 <Input
@@ -331,6 +371,44 @@ export function StudentOnboardingPage() {
                   placeholder={country === 'US' ? 'e.g. Austin, TX' : 'e.g. London, England'}
                   required
                 />
+
+                {/* Time Zone */}
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Time Zone *
+                  </label>
+                  <select
+                    value={timeZone}
+                    onChange={(e) => setTimeZone(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                  >
+                    <option value="">Select your time zone</option>
+                    {TIMEZONE_OPTIONS.map((tz) => (
+                      <option key={tz} value={tz}>
+                        {tz}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Preferred Date & Time */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Input
+                    label="Preferred Date *"
+                    type="date"
+                    value={preferDate}
+                    onChange={(e) => setPreferDate(e.target.value)}
+                    required
+                  />
+                  <Input
+                    label="Preferred Time *"
+                    type="time"
+                    value={preferTime}
+                    onChange={(e) => setPreferTime(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
             )}
 
@@ -388,7 +466,7 @@ export function StudentOnboardingPage() {
                           <span>Upload a file</span>
                           <input
                             type="file"
-                            accept=".pdf,.png,.jpg,.jpeg"
+                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
                             onChange={handleFileChange}
                             className="sr-only"
                           />

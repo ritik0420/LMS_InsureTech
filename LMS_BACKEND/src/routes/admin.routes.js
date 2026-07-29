@@ -20,7 +20,12 @@ const {
   createManager,
   getManager,
   assignStudentToManager,
-  unassignStudentFromManager
+  unassignStudentFromManager,
+  addClassLink,
+  deleteClassLink,
+  addInvoice,
+  updateInvoice,
+  deleteInvoice
 } = require("../controllers/admin.controller");
 
 const adminRouter = Router();
@@ -54,6 +59,13 @@ adminRouter.post("/managers", createManager);
 adminRouter.get("/managers/:id", getManager);
 adminRouter.post("/managers/:managerId/assign/:studentId", assignStudentToManager);
 adminRouter.delete("/managers/:managerId/assign/:studentId", unassignStudentFromManager);
+
+adminRouter.post("/students/:id/class-links", addClassLink);
+adminRouter.delete("/students/:id/class-links/:linkId", deleteClassLink);
+
+adminRouter.post("/students/:id/invoices", addInvoice);
+adminRouter.put("/students/:id/invoices/:invoiceId", updateInvoice);
+adminRouter.delete("/students/:id/invoices/:invoiceId", deleteInvoice);
 
 module.exports = adminRouter;
 

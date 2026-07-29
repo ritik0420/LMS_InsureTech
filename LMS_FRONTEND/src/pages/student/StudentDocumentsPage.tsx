@@ -79,7 +79,7 @@ export function StudentDocumentsPage() {
           <input
             ref={fileRef}
             type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0]
@@ -113,7 +113,7 @@ export function StudentDocumentsPage() {
             {documents.map((doc) => (
               <li
                 key={doc._id}
-                className="flex items-center justify-between gap-4 px-4 py-3"
+                className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="rounded-lg bg-slate-100 p-2 text-slate-600">

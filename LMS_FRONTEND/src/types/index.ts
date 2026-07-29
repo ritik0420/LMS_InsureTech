@@ -12,6 +12,8 @@ export interface User {
   isActive?: boolean
   documents?: Document[]
   certificates?: Certificate[]
+  classLinks?: ClassLink[]
+  invoices?: Invoice[]
   isOnboarded?: boolean
   currentStatusCityState?: string
   visaStatus?: string
@@ -52,6 +54,28 @@ export interface Certificate {
   updatedAt?: string
 }
 
+export interface ClassLink {
+  _id: string
+  title: string
+  url: string
+  description?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface Invoice {
+  _id: string
+  title: string
+  amount: number
+  currency: string
+  description?: string
+  status: 'Pending' | 'Paid' | 'Overdue'
+  dueDate?: string
+  paymentLink?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface AuthResponse {
   message: string
   token: string
@@ -61,3 +85,4 @@ export interface AuthResponse {
 export interface ApiError {
   message: string
 }
+

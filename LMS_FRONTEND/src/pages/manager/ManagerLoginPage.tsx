@@ -1,10 +1,11 @@
 
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type MouseEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, AlertCircle, User } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, Mail, Lock, User } from 'lucide-react'
 import { ApiClientError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
 import { AuthLayout } from '../../components/AuthLayout'
+import { useRipple } from '../../hooks/useRipple'
 
 export function ManagerLoginPage() {
   const { login, isAuthenticated, user } = useAuth()
@@ -14,6 +15,7 @@ export function ManagerLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const ripple = useRipple<HTMLButtonElement>()
 
   if (isAuthenticated && user?.role === 'MANAGER') {
     return <Navigate to="/manager" replace />
@@ -33,9 +35,19 @@ export function ManagerLoginPage() {
     }
   }
 
+  const togglePassword = (e: MouseEvent<HTMLButtonElement>) => {
+    ripple(e)
+    setShowPassword((prev) => !prev)
+  }
+
   return (
-    <AuthLayout>
-      {/* Avatar icon */}
+    <AuthLayout mobileVariant="form" mobileBackTo="/">
+      <img
+        src="/insuretech logo (1).png"
+        alt="InsureTech Logo"
+        className="auth-form-logo auth-form-logo--in-card"
+      />
+
       <div className="auth-form-avatar">
         <User />
       </div>
@@ -53,12 +65,12 @@ export function ManagerLoginPage() {
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Email */}
         <div className="auth-field">
           <label htmlFor="manager-email" className="auth-field-label">
             Email
           </label>
-          <div className="auth-field-input-wrapper">
+          <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+            <Mail className="auth-field-icon" aria-hidden />
             <input
               id="manager-email"
               type="email"
@@ -72,27 +84,26 @@ export function ManagerLoginPage() {
           </div>
         </div>
 
-        {/* Password */}
         <div className="auth-field">
           <label htmlFor="manager-password" className="auth-field-label">
             Password
           </label>
-          <div className="auth-field-input-wrapper">
+          <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+            <Lock className="auth-field-icon" aria-hidden />
             <input
               id="manager-password"
               type={showPassword ? 'text' : 'password'}
-              className={`auth-field-input${error ? ' error' : ''}`}
+              className={`auth-field-input auth-field-input--password${error ? ' error' : ''}`}
               placeholder="••••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              style={{ paddingRight: '2.75rem' }}
             />
             <button
               type="button"
-              className="auth-password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
+              className="auth-password-toggle auth-pressable"
+              onClick={togglePassword}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
@@ -106,15 +117,16 @@ export function ManagerLoginPage() {
 
         <button
           type="submit"
-          className="auth-submit-btn"
+          className="auth-submit-btn auth-pressable"
           disabled={loading}
+          onClick={ripple}
         >
           {loading && <span className="auth-spinner" />}
           Sign In
         </button>
       </form>
 
-      <p className="auth-footer">
+      <p className="auth-footer auth-footer--switch">
         <Link to="/">← Back to home</Link>
       </p>
     </AuthLayout>

@@ -26,12 +26,12 @@ export function Modal({ open, title, children, onClose, size = 'md' }: ModalProp
         aria-hidden
       />
       <div
-        className={`relative w-full ${sizeClasses[size]} rounded-2xl bg-white shadow-xl`}
+        className={`relative w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-4 py-4 sm:px-6 rounded-t-2xl">
           <h2 id="modal-title" className="text-lg font-semibold text-slate-900">
             {title}
           </h2>
@@ -44,7 +44,7 @@ export function Modal({ open, title, children, onClose, size = 'md' }: ModalProp
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div className="px-4 py-5 sm:px-6">{children}</div>
       </div>
     </div>
   )

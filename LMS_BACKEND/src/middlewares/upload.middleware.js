@@ -39,14 +39,16 @@ const allowedMimeTypes = [
   "application/pdf",
   "image/jpeg",
   "image/jpg",
-  "image/png"
+  "image/png",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ];
 
 const fileFilter = (_req, file, cb) => {
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only PDF, JPG, and PNG files are allowed"));
+    cb(new Error("Only PDF, JPG, PNG, DOC, and DOCX files are allowed"));
   }
 };
 

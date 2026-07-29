@@ -9,6 +9,41 @@
   color: #0f172a;
 }
 
+.landing-page--auth {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: transparent;
+}
+
+.landing-page--auth .landing-auth-form {
+  flex: 1;
+}
+
+.landing-page--auth .landing-auth-form .auth-layout {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .landing-page--auth {
+    background: #fff;
+  }
+}
+
+.landing-footer--auth {
+  position: relative;
+  z-index: 2;
+  background: #f8fafc;
+  border-top: none;
+  padding: 1rem 1.5rem 1.25rem;
+}
+
+@media (max-width: 1023px) {
+  .landing-page--auth .landing-footer--auth {
+    background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+  }
+}
+
 /* ═══════  HERO  ═══════ */
 .landing-hero {
   display: flex;
@@ -67,6 +102,7 @@
   justify-content: center;
   min-height: 100vh;
   overflow-y: auto;
+  padding: 2rem 1rem;
 }
 
 @media (min-width: 1024px) {

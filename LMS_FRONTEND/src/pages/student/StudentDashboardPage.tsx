@@ -1,4 +1,4 @@
-import { Award, FileText, User } from 'lucide-react'
+import { Award, CreditCard, FileText, Link2, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getProfile } from '../../api/student'
@@ -28,6 +28,8 @@ export function StudentDashboardPage() {
 
   const docCount = profile?.documents?.length ?? 0
   const certCount = profile?.certificates?.length ?? 0
+  const linkCount = profile?.classLinks?.length ?? 0
+  const invoiceCount = profile?.invoices?.length ?? 0
 
   return (
     <div className="space-y-6">
@@ -63,6 +65,20 @@ export function StudentDashboardPage() {
           description={`${certCount} certificate${certCount !== 1 ? 's' : ''} available`}
           to="/student/certificates"
           color="emerald"
+        />
+        <DashboardCard
+          icon={Link2}
+          title="Class Links"
+          description={`${linkCount} link${linkCount !== 1 ? 's' : ''} shared`}
+          to="/student/class-links"
+          color="indigo"
+        />
+        <DashboardCard
+          icon={CreditCard}
+          title="Payments"
+          description={`${invoiceCount} invoice${invoiceCount !== 1 ? 's' : ''}`}
+          to="/student/payments"
+          color="amber"
         />
       </div>
 
@@ -105,12 +121,14 @@ function DashboardCard({
   title: string
   description: string
   to: string
-  color: 'brand' | 'cyan' | 'emerald'
+  color: 'brand' | 'cyan' | 'emerald' | 'indigo' | 'amber'
 }) {
   const colors = {
     brand: 'bg-brand-50 text-brand-600 group-hover:bg-brand-100',
     cyan: 'bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100',
     emerald: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
+    indigo: 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100',
+    amber: 'bg-amber-50 text-amber-600 group-hover:bg-amber-100',
   }
 
   return (

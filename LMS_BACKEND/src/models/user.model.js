@@ -11,6 +11,32 @@ const documentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const classLinkSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, trim: true },
+    url: { type: String, required: true, trim: true },
+    description: { type: String, trim: true, default: "" }
+  },
+  { timestamps: true }
+);
+
+const invoiceSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, trim: true },
+    amount: { type: Number, required: true },
+    currency: { type: String, trim: true, default: "USD" },
+    description: { type: String, trim: true, default: "" },
+    status: {
+      type: String,
+      enum: ["Pending", "Paid", "Overdue"],
+      default: "Pending"
+    },
+    dueDate: { type: Date, default: null },
+    paymentLink: { type: String, trim: true, default: "" }
+  },
+  { timestamps: true }
+);
+
 const certificateSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
@@ -68,6 +94,8 @@ const userSchema = new mongoose.Schema(
     },
     documents: [documentSchema],
     certificates: [certificateSchema],
+    classLinks: [classLinkSchema],
+    invoices: [invoiceSchema],
     isOnboarded: {
       type: Boolean,
       default: false
@@ -176,6 +204,8 @@ userSchema.methods.toPublicJSON = function () {
     preferredJobType: this.preferredJobType,
     expectedSalaryPeriod: this.expectedSalaryPeriod,
     securityClearance: this.securityClearance,
+    classLinks: this.classLinks,
+    invoices: this.invoices,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt
   };

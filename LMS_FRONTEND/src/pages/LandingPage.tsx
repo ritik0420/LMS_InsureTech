@@ -2,75 +2,51 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Users,
+  Mail,
+  Lock,
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
-  Star,
+  BadgeCheck,
 } from 'lucide-react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { useState, useEffect, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { ApiClientError } from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import { AuthLayout } from '../components/AuthLayout'
+import { useRipple } from '../hooks/useRipple'
 
 const initialFormData = {
-  firstName: '',
-  lastName: '',
   email: '',
   password: '',
   confirmPassword: '',
+  referralId: '',
 }
 
-/* ── Testimonials (same data as AuthLayout for consistency) ── */
-const testimonials = [
-  {
-    quote:
-      'Cloud DevOps support was exceptional with a successful result.',
-    name: 'Celestine Ndip',
-    role: '2 reviews',
-    company: '5 months ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'My experience with the InsureTech Skills classes for cyber security has been positive. The sessions are practical, well-structured, and focused on real-world applications.',
-    name: 'Derrick Enohnyaket',
-    role: '1 review',
-    company: '5 months ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'Great team! I have had a great experience so far with AWS Solutions Architecture. They are flexible, supportive, and professional. I highly recommend them.',
-    name: 'TCHINDRO SOSSA',
-    role: '5 reviews',
-    company: '2 months ago',
-    rating: 5,
-  },
-]
+const initialLoginData = {
+  email: '',
+  password: '',
+}
 
 export function LandingPage() {
   const navigate = useNavigate()
-  const { signup, user, isAuthenticated } = useAuth()
+  const { signup, login, user, isAuthenticated } = useAuth()
 
   if (isAuthenticated && user) {
     if (user.role === 'ADMIN') return <Navigate to="/admin" replace />
     if (user.role === 'MANAGER') return <Navigate to="/manager" replace />
     return <Navigate to="/student" replace />
   }
-  const [showSignupForm, setShowSignupForm] = useState(false)
+
+  const [mobileScreen, setMobileScreen] = useState<'signin' | 'signup'>('signin')
+  const ripple = useRipple<HTMLButtonElement>()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [loginError, setLoginError] = useState('')
   const [formData, setFormData] = useState(initialFormData)
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
-    }, 6000)
-    return () => clearInterval(timer)
-  }, [])
+  const [loginData, setLoginData] = useState(initialLoginData)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -78,6 +54,33 @@ export function LandingPage() {
       ...prev,
       [name]: value,
     }))
+  }
+
+  const handleLoginChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setLoginData(prev => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleLoginSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setLoginError('')
+    setIsLoggingIn(true)
+
+    try {
+      await login('STUDENT', loginData.email, loginData.password)
+      navigate('/student')
+    } catch (err) {
+      if (err instanceof ApiClientError) {
+        setLoginError('Invalid email or password. Please try again.')
+      } else {
+        setLoginError('Unable to connect. Please check your internet connection.')
+      }
+    } finally {
+      setIsLoggingIn(false)
+    }
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -92,11 +95,10 @@ export function LandingPage() {
     setIsSubmitting(true)
 
     try {
-      const fullName = [formData.firstName, formData.lastName].filter(Boolean).join(' ').trim()
+      const fullName = formData.email.split('@')[0] || 'Student'
       await signup(fullName, formData.email, formData.password)
 
       setFormData(initialFormData)
-      setShowSignupForm(false)
       setSubmitMessage({ type: 'success', text: 'Account created. You are signed in.' })
       navigate('/student')
     } catch (error) {
@@ -107,59 +109,239 @@ export function LandingPage() {
     }
   }
 
-  const testimonial = testimonials[currentTestimonial]
+  const authExtrasRow = (
+    <div className="auth-extras-row">
+      <label className="auth-remember">
+        <input
+          type="checkbox"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="auth-remember-checkbox"
+        />
+        <span>Remember me</span>
+      </label>
+      <button type="button" className="auth-forgot-link">
+        Forgot password?
+      </button>
+    </div>
+  )
 
+  const signInForm = (
+    <form onSubmit={handleLoginSubmit} className="auth-mobile-form">
+      <h2 className="auth-card-title">Login</h2>
 
-
-  /* ── Shared signup form markup ── */
-  const signupForm = (
-    <form onSubmit={handleSubmit}>
-      {/* Name row */}
-      <div className="landing-name-row">
-        <div className="auth-field">
-          <label htmlFor="signup-firstName" className="auth-field-label">
-            First name
-          </label>
-          <div className="auth-field-input-wrapper">
-            <input
-              id="signup-firstName"
-              type="text"
-              name="firstName"
-              className="auth-field-input"
-              placeholder="John"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+      {loginError && (
+        <div className="auth-error">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{loginError}</span>
         </div>
-        <div className="auth-field">
-          <label htmlFor="signup-lastName" className="auth-field-label">
-            Last name
-          </label>
-          <div className="auth-field-input-wrapper">
-            <input
-              id="signup-lastName"
-              type="text"
-              name="lastName"
-              className="auth-field-input"
-              placeholder="Doe"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+      )}
+
+      <div className="auth-field">
+        <label htmlFor="login-email" className="auth-field-label">
+          Email
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Mail className="auth-field-icon" aria-hidden />
+          <input
+            id="login-email"
+            type="email"
+            name="email"
+            className="auth-field-input"
+            placeholder="Enter your mail"
+            value={loginData.email}
+            onChange={handleLoginChange}
+            required
+            autoComplete="email"
+          />
         </div>
       </div>
 
-      {/* Email */}
+      <div className="auth-field">
+        <label htmlFor="login-password" className="auth-field-label">
+          Password
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Lock className="auth-field-icon" aria-hidden />
+          <input
+            id="login-password"
+            type="password"
+            name="password"
+            className="auth-field-input"
+            placeholder="Enter your Password"
+            value={loginData.password}
+            onChange={handleLoginChange}
+            required
+            autoComplete="current-password"
+          />
+        </div>
+      </div>
+
+      {authExtrasRow}
+
+      <button
+        type="submit"
+        className="auth-submit-btn auth-pressable"
+        disabled={isLoggingIn}
+        onClick={ripple}
+      >
+        {isLoggingIn && <span className="auth-spinner" />}
+        {isLoggingIn ? 'Signing in...' : 'Sign in'}
+      </button>
+
+      <p className="auth-footer auth-footer--switch auth-footer--mobile-only">
+        Don&apos;t have an account?{' '}
+        <button
+          type="button"
+          className="auth-footer-link-btn"
+          onClick={() => setMobileScreen('signup')}
+        >
+          Sign up
+        </button>
+      </p>
+    </form>
+  )
+
+  const signUpForm = (
+    <form onSubmit={handleSubmit} className="auth-mobile-form">
+      <h2 className="auth-card-title">Sign up</h2>
+
+      {submitMessage && (
+        <div className={submitMessage.type === 'error' ? 'auth-error' : 'landing-success-msg'}>
+          {submitMessage.type === 'error' ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
+          <span>{submitMessage.text}</span>
+        </div>
+      )}
+
       <div className="auth-field">
         <label htmlFor="signup-email" className="auth-field-label">
           Email
         </label>
-        <div className="auth-field-input-wrapper">
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Mail className="auth-field-icon" aria-hidden />
           <input
             id="signup-email"
+            type="email"
+            name="email"
+            className="auth-field-input"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="auth-field">
+        <label htmlFor="signup-password" className="auth-field-label">
+          Password
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Lock className="auth-field-icon" aria-hidden />
+          <input
+            id="signup-password"
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            className="auth-field-input auth-field-input--password"
+            placeholder="Enter your Password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+          <button
+            type="button"
+            className="auth-password-toggle auth-pressable auth-password-toggle--desktop"
+            onClick={(e) => {
+              ripple(e)
+              setShowPassword(prev => !prev)
+            }}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff className="h-[18px] w-[18px] auth-eye-icon" /> : <Eye className="h-[18px] w-[18px] auth-eye-icon" />}
+          </button>
+        </div>
+      </div>
+
+      <div className="auth-field">
+        <label htmlFor="signup-confirmPassword" className="auth-field-label">
+          Confirm password
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Lock className="auth-field-icon" aria-hidden />
+          <input
+            id="signup-confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPassword"
+            className="auth-field-input auth-field-input--password"
+            placeholder="Confirm your Password"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            required
+          />
+          <button
+            type="button"
+            className="auth-password-toggle auth-password-toggle--desktop"
+            onClick={() => setShowConfirmPassword(prev => !prev)}
+            aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+          >
+            {showConfirmPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+          </button>
+        </div>
+      </div>
+
+      <div className="auth-field">
+        <label htmlFor="signup-referralId" className="auth-field-label">
+          Referral ID
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <BadgeCheck className="auth-field-icon" aria-hidden />
+          <input
+            id="signup-referralId"
+            type="text"
+            name="referralId"
+            className="auth-field-input"
+            placeholder="Enter referral ID (Optional)"
+            value={formData.referralId}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+
+      {authExtrasRow}
+
+      <button
+        type="submit"
+        className="auth-submit-btn auth-pressable"
+        disabled={isSubmitting}
+        onClick={ripple}
+      >
+        {isSubmitting && <span className="auth-spinner" />}
+        {isSubmitting ? 'Creating account...' : 'Sign up'}
+      </button>
+
+      <p className="auth-footer auth-footer--switch auth-footer--mobile-only">
+        Already have an account?{' '}
+        <button
+          type="button"
+          className="auth-footer-link-btn"
+          onClick={() => setMobileScreen('signin')}
+        >
+          Login
+        </button>
+      </p>
+    </form>
+  )
+
+  const desktopSignupForm = (
+    <form onSubmit={handleSubmit}>
+      <div className="auth-field">
+        <label htmlFor="desktop-email" className="auth-field-label">
+          Email
+        </label>
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Mail className="auth-field-icon" aria-hidden />
+          <input
+            id="desktop-email"
             type="email"
             name="email"
             className="auth-field-input"
@@ -171,50 +353,51 @@ export function LandingPage() {
         </div>
       </div>
 
-      {/* Password */}
       <div className="auth-field">
-        <label htmlFor="signup-password" className="auth-field-label">
+        <label htmlFor="desktop-password" className="auth-field-label">
           Password
         </label>
-        <div className="auth-field-input-wrapper">
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Lock className="auth-field-icon" aria-hidden />
           <input
-            id="signup-password"
+            id="desktop-password"
             type={showPassword ? 'text' : 'password'}
             name="password"
-            className="auth-field-input"
+            className="auth-field-input auth-field-input--password"
             placeholder="••••••••"
             value={formData.password}
             onChange={handleInputChange}
             required
-            style={{ paddingRight: '2.75rem' }}
           />
           <button
             type="button"
-            className="auth-password-toggle"
-            onClick={() => setShowPassword(prev => !prev)}
+            className="auth-password-toggle auth-pressable"
+            onClick={(e) => {
+              ripple(e)
+              setShowPassword(prev => !prev)
+            }}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
-            {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+            {showPassword ? <EyeOff className="h-[18px] w-[18px] auth-eye-icon" /> : <Eye className="h-[18px] w-[18px] auth-eye-icon" />}
           </button>
         </div>
       </div>
 
-      {/* Confirm Password */}
       <div className="auth-field">
-        <label htmlFor="signup-confirmPassword" className="auth-field-label">
+        <label htmlFor="desktop-confirmPassword" className="auth-field-label">
           Confirm password
         </label>
-        <div className="auth-field-input-wrapper">
+        <div className="auth-field-input-wrapper auth-field-input-wrapper--has-icon">
+          <Lock className="auth-field-icon" aria-hidden />
           <input
-            id="signup-confirmPassword"
+            id="desktop-confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             name="confirmPassword"
-            className="auth-field-input"
+            className="auth-field-input auth-field-input--password"
             placeholder="••••••••"
             value={formData.confirmPassword}
             onChange={handleInputChange}
             required
-            style={{ paddingRight: '2.75rem' }}
           />
           <button
             type="button"
@@ -236,144 +419,72 @@ export function LandingPage() {
 
       <button
         type="submit"
-        className="auth-submit-btn"
+        className="auth-submit-btn auth-pressable"
         disabled={isSubmitting}
+        onClick={ripple}
       >
         {isSubmitting && <span className="auth-spinner" />}
         {isSubmitting ? 'Creating account...' : 'Create an account'}
       </button>
 
-      <p className="auth-footer">
+      <p className="auth-footer auth-footer--switch auth-footer--desktop-only">
         Already have an account?{' '}
-        <Link to="/student/login">Log in</Link>
+        <Link to="/student/login">Sign in</Link>
       </p>
     </form>
   )
 
+  const isSignIn = mobileScreen === 'signin'
+
   return (
-    <div className="landing-page">
-      {/* ═══════════════  HERO ═══════════════ */}
-      <section className="landing-hero">
-        {/* ── Left Panel (blue gradient) ── */}
-        <div className="landing-hero-left">
-
-          {/* Globe */}
-          <div className="auth-globe-container">
-            <img
-              src="/globe_illustration.png"
-              alt="Global Network"
-              className="auth-globe-image"
-            />
-            <div className="auth-floating-avatar auth-avatar-1">
-              <svg viewBox="0 0 36 36" fill="none">
-                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
-                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
-              </svg>
+    <div
+      className={[
+        'landing-page',
+        'landing-page--auth',
+        `landing-page--mobile-${mobileScreen}`,
+      ].join(' ')}
+    >
+      <div className="landing-auth-form">
+        <AuthLayout
+          mobileVariant="form"
+          mobileHeroTitle={isSignIn ? 'Hello!' : 'Create Account'}
+          mobileHeroSubtitle={
+            isSignIn
+              ? 'Securely log in with your email and password.'
+              : 'Register your account today using a valid email and password.'
+          }
+        >
+          <div className="auth-mobile-screens">
+            <div className={`auth-mobile-screen${isSignIn ? ' auth-mobile-screen--active' : ''}`}>
+              {signInForm}
             </div>
-            <div className="auth-floating-avatar auth-avatar-2">
-              <svg viewBox="0 0 36 36" fill="none">
-                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
-                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
-              </svg>
-            </div>
-            <div className="auth-floating-avatar auth-avatar-3">
-              <svg viewBox="0 0 36 36" fill="none">
-                <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
-                <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="rgba(255,255,255,0.3)" />
-              </svg>
-            </div>
-            <div className="auth-connection-dot auth-dot-1" />
-            <div className="auth-connection-dot auth-dot-2" />
-            <div className="auth-connection-dot auth-dot-3" />
-          </div>
-
-          {/* Testimonial */}
-          <div className="auth-testimonial">
-            <p className="auth-testimonial-quote">
-              &ldquo;{testimonial.quote}&rdquo;
-            </p>
-            <div className="auth-testimonial-footer">
-              <div className="auth-testimonial-info">
-                <p className="auth-testimonial-name">{testimonial.name}</p>
-                <p className="auth-testimonial-role">{testimonial.role}</p>
-                <p className="auth-testimonial-company">{testimonial.company}</p>
-              </div>
-              <div className="auth-testimonial-rating">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="auth-star" />
-                ))}
-              </div>
-            </div>
-            <div className="auth-testimonial-nav">
-              <button
-                type="button"
-                onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
-                className="auth-nav-btn"
-                aria-label="Previous testimonial"
-              >
-                <ChevronLeft className="auth-nav-icon" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
-                className="auth-nav-btn"
-                aria-label="Next testimonial"
-              >
-                <ChevronRight className="auth-nav-icon" />
-              </button>
+            <div className={`auth-mobile-screen auth-mobile-screen--signup${!isSignIn ? ' auth-mobile-screen--active' : ''}`}>
+              {signUpForm}
             </div>
           </div>
-        </div>
 
-        {/* ── Right Panel (form) ── */}
-        <div className="landing-hero-right">
-          <div className="landing-hero-form-wrap">
-            {/* Logo */}
+          <div className="auth-desktop-only">
             <img
               src="/insuretech logo (1).png"
               alt="InsureTech Logo"
-              className="auth-form-logo"
+              className="auth-form-logo auth-form-logo--in-card"
             />
 
-            <h1 className="auth-form-title">Create Account</h1>
+            <h1 className="auth-form-title">Register</h1>
             <p className="auth-form-subtitle">
               Your informations are secure and will not be shared with anyone
             </p>
 
-            {signupForm}
+            {desktopSignupForm}
           </div>
-        </div>
-      </section>
+        </AuthLayout>
+      </div>
 
-      {/* ═══════════════  FOOTER ═══════════════ */}
-      <footer className="landing-footer">
+      <footer className="landing-footer landing-footer--auth auth-desktop-only">
         <p>
           © {new Date().getFullYear()} InsureTech LMS. Built with precision.
         </p>
       </footer>
-
-      {/* ═══════════════  SIGNUP MODAL ═══════════════ */}
-      {showSignupForm && (
-        <div className="landing-modal-overlay" onClick={() => setShowSignupForm(false)}>
-          <div className="landing-modal-card" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setShowSignupForm(false)}
-              className="landing-modal-close"
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <div className="auth-form-avatar" style={{ marginTop: '0.2rem' }}>
-              <Users />
-            </div>
-            <h2 className="auth-form-title">Create Account</h2>
-            <p className="auth-form-subtitle">
-              Your informations are secure and will not be shared with anyone
-            </p>
-            {signupForm}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

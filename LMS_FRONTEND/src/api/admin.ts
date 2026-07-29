@@ -1,5 +1,5 @@
 import { apiRequest } from './client'
-import type { Certificate, User } from '../types'
+import type { Certificate, ClassLink, Invoice, User } from '../types'
 
 export async function listStudents() {
   const data = await apiRequest<{ students: User[] }>('/admin/students')
@@ -119,6 +119,83 @@ export async function assignStudentToManager(managerId: string, studentId: strin
 export async function unassignStudentFromManager(managerId: string, studentId: string) {
   return apiRequest<{ message: string }>(
     `/admin/managers/${managerId}/assign/${studentId}`,
+    { method: 'DELETE' },
+  )
+}
+
+// Class Links
+
+export async function addClassLink(
+  studentId: string,
+  payload: { title: string; url: string; description?: string },
+) {
+  const data = await apiRequest<{ message: string; classLink: ClassLink }>(
+    `/admin/students/${studentId}/class-links`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  )
+  return data.classLink
+}
+
+export async function deleteClassLink(studentId: string, linkId: string) {
+  return apiRequest<{ message: string }>(
+    `/admin/students/${studentId}/class-links/${linkId}`,
+    { method: 'DELETE' },
+  )
+}
+
+// Invoices
+
+export async function addInvoice(
+  studentId: string,
+  payload: {
+    title: string
+    amount: number
+    currency?: string
+    description?: string
+    status?: string
+    dueDate?: string
+    paymentLink?: string
+  },
+) {
+  const data = await apiRequest<{ message: string; invoice: Invoice }>(
+    `/admin/students/${studentId}/invoices`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+  )
+  return data.invoice
+}
+
+export async function updateInvoice(
+  studentId: string,
+  invoiceId: string,
+  payload: Partial<{
+    title: string
+    amount: number
+    currency: string
+    description: string
+    status: string
+    dueDate: string
+    paymentLink: string
+  }>,
+) {
+  const data = await apiRequest<{ message: string; invoice: Invoice }>(
+    `/admin/students/${studentId}/invoices/${invoiceId}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    },
+  )
+  return data.invoice
+}
+
+export async function deleteInvoice(studentId: string, invoiceId: string) {
+  return apiRequest<{ message: string }>(
+    `/admin/students/${studentId}/invoices/${invoiceId}`,
     { method: 'DELETE' },
   )
 }

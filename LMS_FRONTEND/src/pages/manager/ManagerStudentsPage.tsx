@@ -80,52 +80,54 @@ export function ManagerStudentsPage() {
         />
       ) : (
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Student
-                </th>
-                <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell">
-                  Phone
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Certs
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.map((student) => (
-                <tr key={getUserId(student)} className="hover:bg-slate-50/80">
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-slate-900">{student.fullName}</p>
-                    <p className="text-sm text-slate-500">{student.email}</p>
-                  </td>
-                  <td className="hidden px-4 py-3 text-sm text-slate-600 sm:table-cell">
-                    {student.phone || '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusBadge active={student.isActive !== false} />
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-600">
-                    {student.certificates?.length ?? 0}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      to={`/manager/students/${getUserId(student)}`}
-                      className="text-sm font-medium text-brand-600 hover:text-brand-700"
-                    >
-                      View
-                    </Link>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Student
+                  </th>
+                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell">
+                    Phone
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Status
+                  </th>
+                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell">
+                    Certs
+                  </th>
+                  <th className="px-4 py-3" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((student) => (
+                  <tr key={getUserId(student)} className="hover:bg-slate-50/80">
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-slate-900">{student.fullName}</p>
+                      <p className="text-sm text-slate-500 break-all">{student.email}</p>
+                    </td>
+                    <td className="hidden px-4 py-3 text-sm text-slate-600 sm:table-cell">
+                      {student.phone || '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <StatusBadge active={student.isActive !== false} />
+                    </td>
+                    <td className="hidden px-4 py-3 text-sm text-slate-600 sm:table-cell">
+                      {student.certificates?.length ?? 0}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        to={`/manager/students/${getUserId(student)}`}
+                        className="text-sm font-medium text-brand-600 hover:text-brand-700"
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

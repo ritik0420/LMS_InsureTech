@@ -1,5 +1,7 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, type ReactNode, type MouseEvent } from 'react'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useRipple } from '../hooks/useRipple'
 
 interface Testimonial {
   quote: string
@@ -38,10 +40,33 @@ const testimonials: Testimonial[] = [
 
 interface AuthLayoutProps {
   children: ReactNode
+  /** `welcome` = blue hero (landing). `form` = mobile auth card (login/register). */
+  mobileVariant?: 'welcome' | 'form'
+  mobileBackTo?: string
+  onMobileBack?: () => void
+  showMobileBack?: boolean
+  mobileHeroTitle?: string
+  mobileHeroSubtitle?: string
 }
 
-export function AuthLayout({ children }: AuthLayoutProps) {
+export function AuthLayout({
+  children,
+  mobileVariant = 'form',
+  mobileBackTo,
+  onMobileBack,
+  showMobileBack = false,
+  mobileHeroTitle,
+  mobileHeroSubtitle,
+}: AuthLayoutProps) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [formEntered, setFormEntered] = useState(false)
+  const rippleLink = useRipple<HTMLAnchorElement>()
+  const rippleBtn = useRipple<HTMLButtonElement>()
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setFormEntered(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,27 +87,103 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
   const testimonial = testimonials[currentTestimonial]
 
-  return (
-    <div className="auth-layout">
-      {/* Left Panel — Blue gradient with globe & testimonial */}
-      <div className="auth-left-panel">
-        {/* Brand Logo */}
-        <div className="auth-brand">
-          <img
-            src="/insuretech logo (1).png"
-            alt="InsureTech Logo"
-            className="auth-brand-logo"
-          />
-        </div>
+  const handleMobileBack = (e: MouseEvent<HTMLButtonElement>) => {
+    rippleBtn(e)
+    onMobileBack?.()
+  }
 
-        {/* Globe Illustration */}
+  const mobileBack =
+    showMobileBack && (mobileBackTo || onMobileBack) ? (
+      mobileBackTo ? (
+        <Link
+          to={mobileBackTo}
+          className="auth-mobile-back auth-pressable"
+          onClick={rippleLink}
+        >
+          <ChevronLeft className="auth-mobile-back-icon" />
+          Back
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={handleMobileBack}
+          className="auth-mobile-back auth-pressable"
+        >
+          <ChevronLeft className="auth-mobile-back-icon" />
+          Back
+        </button>
+      )
+    ) : null
+
+  return (
+    <div className={`auth-layout auth-layout--mobile-${mobileVariant}`}>
+      {mobileVariant === 'form' && mobileHeroTitle && (
+        <div className="auth-mobile-header">
+          <div className="auth-mobile-header-waves" aria-hidden>
+            <svg viewBox="0 0 390 200" preserveAspectRatio="none" className="auth-mobile-header-wave-svg">
+              <path
+                d="M0 120 C80 60 160 180 260 100 C320 50 360 80 390 60 L390 0 L0 0 Z"
+                fill="rgba(96, 165, 250, 0.35)"
+              />
+              <path
+                d="M0 160 C100 90 200 200 300 130 C340 100 370 120 390 100 L390 0 L0 0 Z"
+                fill="rgba(147, 197, 253, 0.25)"
+              />
+              <path
+                d="M0 190 C120 140 220 220 390 150 L390 0 L0 0 Z"
+                fill="rgba(59, 130, 246, 0.2)"
+              />
+            </svg>
+          </div>
+          <div className="auth-mobile-header-content">
+            <div className="auth-mobile-header-title-row">
+              <img
+                src="/cropped-favicon.png"
+                alt="InsureTech"
+                className="auth-mobile-header-favicon"
+              />
+              <h1 className="auth-mobile-header-title">{mobileHeroTitle}</h1>
+            </div>
+            {mobileHeroSubtitle && (
+              <p className="auth-mobile-header-subtitle">{mobileHeroSubtitle}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {mobileVariant === 'welcome' && (
+        <div className="auth-mobile-hero">
+          <div className="auth-mobile-hero-bg" aria-hidden />
+          <div className="auth-mobile-hero-content">
+            <div className="auth-mobile-hero-logo-ring">
+              <img
+                src="/insuretech logo (1).png"
+                alt="InsureTech"
+                className="auth-mobile-hero-logo"
+              />
+            </div>
+            <div className="auth-globe-container auth-globe-container--mobile">
+              <img
+                src="/globe_illustration.png"
+                alt=""
+                className="auth-globe-image"
+              />
+            </div>
+            <p className="auth-mobile-hero-tagline">
+              Skills training for the insurance and tech workforce
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Left Panel — Blue gradient with globe & testimonial (desktop) */}
+      <div className="auth-left-panel">
         <div className="auth-globe-container">
           <img
             src="/globe_illustration.png"
             alt="Global Network"
             className="auth-globe-image"
           />
-          {/* Floating profile avatars */}
           <div className="auth-floating-avatar auth-avatar-1">
             <svg viewBox="0 0 36 36" fill="none">
               <circle cx="18" cy="14" r="6" fill="rgba(255,255,255,0.9)" />
@@ -116,13 +217,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               />
             </svg>
           </div>
-          {/* Connection lines (decorative dots) */}
           <div className="auth-connection-dot auth-dot-1" />
           <div className="auth-connection-dot auth-dot-2" />
           <div className="auth-connection-dot auth-dot-3" />
         </div>
 
-        {/* Testimonial */}
         <div className="auth-testimonial">
           <p className="auth-testimonial-quote">
             &ldquo;{testimonial.quote}&rdquo;
@@ -160,9 +259,11 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         </div>
       </div>
 
-      {/* Right Panel — Form content */}
       <div className="auth-right-panel">
-        <div className="auth-form-wrapper">{children}</div>
+        {mobileBack}
+        <div className={`auth-form-wrapper auth-form-card${formEntered ? ' auth-form-card--entered' : ''}`}>
+          {children}
+        </div>
       </div>
     </div>
   )
