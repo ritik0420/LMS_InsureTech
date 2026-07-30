@@ -121,6 +121,20 @@ const userSchema = new mongoose.Schema(
       size: Number,
       path: String
     },
+    resume2File: {
+      filename: String,
+      originalName: String,
+      mimeType: String,
+      size: Number,
+      path: String
+    },
+    coverLetterFile: {
+      filename: String,
+      originalName: String,
+      mimeType: String,
+      size: Number,
+      path: String
+    },
     totalExperience: {
       type: String,
       trim: true,
@@ -195,6 +209,8 @@ userSchema.methods.toPublicJSON = function () {
     visaStatus: this.visaStatus,
     visaExpiryDate: this.visaExpiryDate,
     resumeFile: this.resumeFile,
+    resume2File: this.resume2File,
+    coverLetterFile: this.coverLetterFile,
     totalExperience: this.totalExperience,
     preferredDesignation: this.preferredDesignation,
     preferredLocations: this.preferredLocations,

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
-import { getProfile, updateProfile, downloadResume, updateResume } from '../../api/student'
+import { getProfile, updateProfile, downloadResume, updateResume, updateResume2, updateCoverLetter, downloadResume2, downloadCoverLetter } from '../../api/student'
 import { ApiClientError } from '../../api/client'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
@@ -77,6 +77,8 @@ export function StudentProfilePage() {
   const [visaStatus, setVisaStatus] = useState('')
   const [visaExpiryDate, setVisaExpiryDate] = useState('')
   const [resumeFile, setResumeFile] = useState<any>(null)
+  const [resume2File, setResume2File] = useState<any>(null)
+  const [coverLetterFile, setCoverLetterFile] = useState<any>(null)
   const [totalExperience, setTotalExperience] = useState('')
   const [preferredDesignation, setPreferredDesignation] = useState('')
   const [preferredLocations, setPreferredLocations] = useState('')
@@ -90,6 +92,8 @@ export function StudentProfilePage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [resumeReplacing, setResumeReplacing] = useState(false)
+  const [resume2Replacing, setResume2Replacing] = useState(false)
+  const [coverLetterReplacing, setCoverLetterReplacing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -105,6 +109,8 @@ export function StudentProfilePage() {
         setVisaStatus(student.visaStatus || '')
         setVisaExpiryDate(student.visaExpiryDate ? student.visaExpiryDate.substring(0, 10) : '')
         setResumeFile(student.resumeFile || null)
+        setResume2File(student.resume2File || null)
+        setCoverLetterFile(student.coverLetterFile || null)
         setTotalExperience(student.totalExperience || '')
         setPreferredDesignation(student.preferredDesignation || '')
         setPreferredLocations(student.preferredLocations || '')
@@ -132,29 +138,55 @@ export function StudentProfilePage() {
   const handleResumeReplace = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    setError('')
-    setSuccess('')
-    setResumeReplacing(true)
-
+    setError(''); setSuccess(''); setResumeReplacing(true)
     try {
       const updatedResume = await updateResume(file)
       setResumeFile(updatedResume)
       setSuccess('Resume updated successfully')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to replace resume')
-    } finally {
-      setResumeReplacing(false)
-    }
+    } finally { setResumeReplacing(false) }
+  }
+
+  const handleResume2Replace = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setError(''); setSuccess(''); setResume2Replacing(true)
+    try {
+      const updated = await updateResume2(file)
+      setResume2File(updated)
+      setSuccess('Secondary resume updated successfully')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to replace secondary resume')
+    } finally { setResume2Replacing(false) }
+  }
+
+  const handleCoverLetterReplace = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setError(''); setSuccess(''); setCoverLetterReplacing(true)
+    try {
+      const updated = await updateCoverLetter(file)
+      setCoverLetterFile(updated)
+      setSuccess('Cover letter updated successfully')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to replace cover letter')
+    } finally { setCoverLetterReplacing(false) }
   }
 
   const handleDownloadResume = async () => {
     if (!resumeFile) return
-    try {
-      await downloadResume(resumeFile.originalName)
-    } catch (err) {
-      setError('Failed to download resume')
-    }
+    try { await downloadResume(resumeFile.originalName) } catch { setError('Failed to download resume') }
+  }
+
+  const handleDownloadResume2 = async () => {
+    if (!resume2File) return
+    try { await downloadResume2(resume2File.originalName) } catch { setError('Failed to download secondary resume') }
+  }
+
+  const handleDownloadCoverLetter = async () => {
+    if (!coverLetterFile) return
+    try { await downloadCoverLetter(coverLetterFile.originalName) } catch { setError('Failed to download cover letter') }
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -384,6 +416,98 @@ export function StudentProfilePage() {
               </div>
             )}
             {resumeReplacing && <p className="text-xs text-cyan-600 animate-pulse">Uploading new resume...</p>}
+          </div>
+
+          {/* Secondary Resume */}
+          <div className="space-y-2 pt-2">
+            <label className="block text-sm font-medium text-slate-700">
+              Secondary Resume
+              <span className="ml-2 text-xs font-normal text-slate-400">(Optional)</span>
+            </label>
+            {resume2File ? (
+              <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="rounded-lg bg-cyan-100 p-2 text-cyan-600">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 break-all">{resume2File.originalName}</p>
+                    <p className="text-xs text-slate-500">
+                      Uploaded on {new Date(resume2File.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="button" variant="secondary" size="sm" onClick={handleDownloadResume2} className="flex items-center gap-1">
+                    <Download className="h-4 w-4" />
+                    Download
+                  </Button>
+                  <label className="cursor-pointer">
+                    <span className="inline-flex items-center gap-1 justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition">
+                      <Upload className="h-3.5 w-3.5" />
+                      Replace
+                    </span>
+                    <input type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" className="sr-only" onChange={handleResume2Replace} disabled={resume2Replacing} />
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-4">
+                <label className="cursor-pointer text-center">
+                  <Upload className="mx-auto h-7 w-7 text-slate-300" />
+                  <span className="mt-1 block text-sm font-semibold text-cyan-600">Upload Secondary Resume</span>
+                  <p className="text-xs text-slate-400 mt-0.5 italic">e.g. a tailored version of your resume</p>
+                  <input type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" className="sr-only" onChange={handleResume2Replace} />
+                </label>
+              </div>
+            )}
+            {resume2Replacing && <p className="text-xs text-cyan-600 animate-pulse">Uploading secondary resume...</p>}
+          </div>
+
+          {/* Cover Letter */}
+          <div className="space-y-2 pt-2">
+            <label className="block text-sm font-medium text-slate-700">
+              Cover Letter
+              <span className="ml-2 text-xs font-normal text-slate-400">(Optional)</span>
+            </label>
+            {coverLetterFile ? (
+              <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="rounded-lg bg-blue-100 p-2 text-blue-600">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 break-all">{coverLetterFile.originalName}</p>
+                    <p className="text-xs text-slate-500">
+                      Uploaded on {new Date(coverLetterFile.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="button" variant="secondary" size="sm" onClick={handleDownloadCoverLetter} className="flex items-center gap-1">
+                    <Download className="h-4 w-4" />
+                    Download
+                  </Button>
+                  <label className="cursor-pointer">
+                    <span className="inline-flex items-center gap-1 justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition">
+                      <Upload className="h-3.5 w-3.5" />
+                      Replace
+                    </span>
+                    <input type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" className="sr-only" onChange={handleCoverLetterReplace} disabled={coverLetterReplacing} />
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-6 py-4">
+                <label className="cursor-pointer text-center">
+                  <Upload className="mx-auto h-7 w-7 text-slate-300" />
+                  <span className="mt-1 block text-sm font-semibold text-blue-600">Upload Cover Letter</span>
+                  <p className="text-xs text-slate-400 mt-0.5 italic">A compelling cover letter can help you stand out</p>
+                  <input type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" className="sr-only" onChange={handleCoverLetterReplace} />
+                </label>
+              </div>
+            )}
+            {coverLetterReplacing && <p className="text-xs text-blue-600 animate-pulse">Uploading cover letter...</p>}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

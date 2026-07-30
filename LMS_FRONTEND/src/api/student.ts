@@ -63,6 +63,42 @@ export async function updateResume(file: File) {
   return data.resumeFile
 }
 
+export async function updateResume2(file: File) {
+  const formData = new FormData()
+  formData.append('resume2', file)
+
+  const data = await apiRequest<{ message: string; resume2File: Document }>(
+    '/student/profile/resume2',
+    {
+      method: 'PUT',
+      body: formData,
+    },
+  )
+  return data.resume2File
+}
+
+export async function updateCoverLetter(file: File) {
+  const formData = new FormData()
+  formData.append('coverLetter', file)
+
+  const data = await apiRequest<{ message: string; coverLetterFile: Document }>(
+    '/student/profile/cover-letter',
+    {
+      method: 'PUT',
+      body: formData,
+    },
+  )
+  return data.coverLetterFile
+}
+
+export async function downloadResume2(filename: string) {
+  return downloadFile('/student/resume2/download', filename)
+}
+
+export async function downloadCoverLetter(filename: string) {
+  return downloadFile('/student/cover-letter/download', filename)
+}
+
 export async function listDocuments() {
   const data = await apiRequest<{ documents: Document[] }>('/student/documents')
   return data.documents

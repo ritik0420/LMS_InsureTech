@@ -155,13 +155,41 @@ const onboardStudent = async (req, res) => {
       }
     }
 
+    if (!req.files || !req.files.resume || !req.files.resume[0]) {
+      return res.status(400).json({ message: "Resume file is required" });
+    }
+
+    const resumeFile = req.files.resume[0];
+    const resume2FileObj = req.files.resume2 ? req.files.resume2[0] : null;
+    const coverLetterFileObj = req.files.coverLetter ? req.files.coverLetter[0] : null;
+
     student.resumeFile = {
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      mimeType: req.file.mimetype,
-      size: req.file.size,
-      path: req.file.path
+      filename: resumeFile.filename,
+      originalName: resumeFile.originalname,
+      mimeType: resumeFile.mimetype,
+      size: resumeFile.size,
+      path: resumeFile.path
     };
+
+    if (resume2FileObj) {
+      student.resume2File = {
+        filename: resume2FileObj.filename,
+        originalName: resume2FileObj.originalname,
+        mimeType: resume2FileObj.mimetype,
+        size: resume2FileObj.size,
+        path: resume2FileObj.path
+      };
+    }
+
+    if (coverLetterFileObj) {
+      student.coverLetterFile = {
+        filename: coverLetterFileObj.filename,
+        originalName: coverLetterFileObj.originalname,
+        mimeType: coverLetterFileObj.mimetype,
+        size: coverLetterFileObj.size,
+        path: coverLetterFileObj.path
+      };
+    }
 
     student.isOnboarded = true;
 
@@ -242,6 +270,110 @@ const updateResume = async (req, res) => {
       message: "Failed to update resume",
       error: error.message
     });
+  }
+};
+
+const updateResume2 = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Secondary resume file is required" });
+    }
+
+    const student = await User.findById(req.user._id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (student.resume2File && student.resume2File.path && fs.existsSync(student.resume2File.path)) {
+      try { fs.unlinkSync(student.resume2File.path); } catch (err) { console.error("Failed to delete old resume2:", err); }
+    }
+
+    student.resume2File = {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      mimeType: req.file.mimetype,
+      size: req.file.size,
+      path: req.file.path
+    };
+
+    await student.save();
+
+    return res.status(200).json({
+      message: "Secondary resume updated successfully",
+      resume2File: student.resume2File
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to update secondary resume",
+      error: error.message
+    });
+  }
+};
+
+const updateCoverLetter = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Cover letter file is required" });
+    }
+
+    const student = await User.findById(req.user._id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (student.coverLetterFile && student.coverLetterFile.path && fs.existsSync(student.coverLetterFile.path)) {
+      try { fs.unlinkSync(student.coverLetterFile.path); } catch (err) { console.error("Failed to delete old cover letter:", err); }
+    }
+
+    student.coverLetterFile = {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      mimeType: req.file.mimetype,
+      size: req.file.size,
+      path: req.file.path
+    };
+
+    await student.save();
+
+    return res.status(200).json({
+      message: "Cover letter updated successfully",
+      coverLetterFile: student.coverLetterFile
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to update cover letter",
+      error: error.message
+    });
+  }
+};
+
+const downloadResume2 = async (req, res) => {
+  try {
+    const student = await User.findById(req.user._id);
+    if (!student || !student.resume2File || !student.resume2File.path) {
+      return res.status(404).json({ message: "Secondary resume not found" });
+    }
+    if (!fs.existsSync(student.resume2File.path)) {
+      return res.status(404).json({ message: "Secondary resume file not found on disk" });
+    }
+    return res.download(student.resume2File.path, student.resume2File.originalName || student.resume2File.filename);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to download secondary resume", error: error.message });
+  }
+};
+
+const downloadCoverLetter = async (req, res) => {
+  try {
+    const student = await User.findById(req.user._id);
+    if (!student || !student.coverLetterFile || !student.coverLetterFile.path) {
+      return res.status(404).json({ message: "Cover letter not found" });
+    }
+    if (!fs.existsSync(student.coverLetterFile.path)) {
+      return res.status(404).json({ message: "Cover letter file not found on disk" });
+    }
+    return res.download(student.coverLetterFile.path, student.coverLetterFile.originalName || student.coverLetterFile.filename);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to download cover letter", error: error.message });
   }
 };
 
@@ -386,6 +518,10 @@ module.exports = {
   onboardStudent,
   downloadResume,
   updateResume,
+  updateResume2,
+  updateCoverLetter,
+  downloadResume2,
+  downloadCoverLetter,
   listClassLinks,
   listInvoices
 };

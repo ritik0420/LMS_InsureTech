@@ -97,6 +97,8 @@ export function StudentOnboardingPage() {
   const [visaStatus, setVisaStatus] = useState('')
   const [visaExpiryDate, setVisaExpiryDate] = useState('')
   const [resume, setResume] = useState<File | null>(null)
+  const [resume2, setResume2] = useState<File | null>(null)
+  const [coverLetter, setCoverLetter] = useState<File | null>(null)
   const [totalExperience, setTotalExperience] = useState('')
   const [preferredDesignation, setPreferredDesignation] = useState('')
   const [preferredLocations, setPreferredLocations] = useState('')
@@ -128,6 +130,32 @@ export function StudentOnboardingPage() {
       } else {
         setError('')
         setResume(file)
+      }
+    }
+  }
+
+  const handleResume2Change = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Secondary resume file size must be under 10MB')
+        setResume2(null)
+      } else {
+        setError('')
+        setResume2(file)
+      }
+    }
+  }
+
+  const handleCoverLetterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        setError('Cover letter file size must be under 10MB')
+        setCoverLetter(null)
+      } else {
+        setError('')
+        setCoverLetter(file)
       }
     }
   }
@@ -197,6 +225,8 @@ export function StudentOnboardingPage() {
     formData.append('visaStatus', visaStatus)
     if (visaExpiryDate) formData.append('visaExpiryDate', visaExpiryDate)
     formData.append('resume', resume)
+    if (resume2) formData.append('resume2', resume2)
+    if (coverLetter) formData.append('coverLetter', coverLetter)
     formData.append('totalExperience', totalExperience)
     formData.append('preferredDesignation', preferredDesignation)
     formData.append('preferredLocations', preferredLocations)
@@ -454,9 +484,10 @@ export function StudentOnboardingPage() {
                   onChange={(e) => setVisaExpiryDate(e.target.value)}
                 />
 
+                {/* Primary Resume Upload */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-slate-700">
-                    Upload updated resume *
+                    Upload Resume *
                   </label>
                   <div className="flex justify-center rounded-xl border border-dashed border-slate-300 px-6 py-6 transition hover:border-cyan-500">
                     <div className="space-y-1 text-center">
@@ -473,12 +504,80 @@ export function StudentOnboardingPage() {
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
-                      <p className="text-xs text-slate-500">PDF, PNG, JPG up to 10MB</p>
+                      <p className="text-xs text-slate-500">PDF, PNG, JPG, DOC up to 10MB</p>
                       {resume && (
                         <div className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800">
                           <Check className="h-4 w-4" />
                           {resume.name}
                         </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Secondary Resume Upload */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Upload Secondary Resume
+                    <span className="ml-2 text-xs font-normal text-slate-400">(Optional)</span>
+                  </label>
+                  <div className="flex justify-center rounded-xl border border-dashed border-slate-200 px-6 py-5 transition hover:border-cyan-400 bg-slate-50/50">
+                    <div className="space-y-1 text-center">
+                      <Upload className="mx-auto h-8 w-8 text-slate-300" />
+                      <div className="flex text-sm text-slate-600">
+                        <label className="relative cursor-pointer rounded-md bg-transparent font-semibold text-cyan-600 hover:text-cyan-500 focus-within:outline-none">
+                          <span>Upload a file</span>
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                            onChange={handleResume2Change}
+                            className="sr-only"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-slate-500">PDF, PNG, JPG, DOC up to 10MB</p>
+                      {resume2 ? (
+                        <div className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-800">
+                          <Check className="h-4 w-4" />
+                          {resume2.name}
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-xs text-slate-400 italic">e.g. a tailored version of your resume</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cover Letter Upload */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Upload Cover Letter
+                    <span className="ml-2 text-xs font-normal text-slate-400">(Optional)</span>
+                  </label>
+                  <div className="flex justify-center rounded-xl border border-dashed border-slate-200 px-6 py-5 transition hover:border-blue-400 bg-slate-50/50">
+                    <div className="space-y-1 text-center">
+                      <Upload className="mx-auto h-8 w-8 text-slate-300" />
+                      <div className="flex text-sm text-slate-600">
+                        <label className="relative cursor-pointer rounded-md bg-transparent font-semibold text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                          <span>Upload a file</span>
+                          <input
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                            onChange={handleCoverLetterChange}
+                            className="sr-only"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-slate-500">PDF, PNG, JPG, DOC up to 10MB</p>
+                      {coverLetter ? (
+                        <div className="mt-3 flex items-center justify-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-800">
+                          <Check className="h-4 w-4" />
+                          {coverLetter.name}
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-xs text-slate-400 italic">A compelling cover letter can help you stand out</p>
                       )}
                     </div>
                   </div>

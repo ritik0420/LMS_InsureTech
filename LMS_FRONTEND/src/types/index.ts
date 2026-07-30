@@ -19,6 +19,8 @@ export interface User {
   visaStatus?: string
   visaExpiryDate?: string
   resumeFile?: Document
+  resume2File?: Document
+  coverLetterFile?: Document
   totalExperience?: string
   preferredDesignation?: string
   preferredLocations?: string

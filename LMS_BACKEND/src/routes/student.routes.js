@@ -16,6 +16,10 @@ const {
   onboardStudent,
   downloadResume,
   updateResume,
+  updateResume2,
+  updateCoverLetter,
+  downloadResume2,
+  downloadCoverLetter,
   listClassLinks,
   listInvoices
 } = require("../controllers/student.controller");
@@ -33,14 +37,34 @@ studentRouter.put(
   updateResume
 );
 
+studentRouter.put(
+  "/profile/resume2",
+  uploadDocument.single("resume2"),
+  handleUploadError,
+  updateResume2
+);
+
+studentRouter.put(
+  "/profile/cover-letter",
+  uploadDocument.single("coverLetter"),
+  handleUploadError,
+  updateCoverLetter
+);
+
 studentRouter.post(
   "/onboard",
-  uploadDocument.single("resume"),
+  uploadDocument.fields([
+    { name: "resume", maxCount: 1 },
+    { name: "resume2", maxCount: 1 },
+    { name: "coverLetter", maxCount: 1 }
+  ]),
   handleUploadError,
   onboardStudent
 );
 
 studentRouter.get("/resume/download", downloadResume);
+studentRouter.get("/resume2/download", downloadResume2);
+studentRouter.get("/cover-letter/download", downloadCoverLetter);
 
 studentRouter.get("/documents", listDocuments);
 studentRouter.post(

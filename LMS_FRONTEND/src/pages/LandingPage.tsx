@@ -429,7 +429,7 @@ export function LandingPage() {
 
       <p className="auth-footer auth-footer--switch auth-footer--desktop-only">
         Already have an account?{' '}
-        <Link to="/student/login">Sign in</Link>
+        <Link to="/student/login">Login</Link>
       </p>
     </form>
   )
