@@ -31,10 +31,20 @@ export function ProtectedRoute({ role }: ProtectedRouteProps) {
   }
 
   if (role === 'STUDENT') {
-    if (!user.isOnboarded && location.pathname !== '/student/onboarding') {
-      return <Navigate to="/student/onboarding" replace />
+    const PRE_ONBOARD_PATHS = [
+      '/student/category',
+      '/student/onboarding',
+      '/student/training-onboard',
+    ]
+    const isPreOnboardPath = PRE_ONBOARD_PATHS.includes(location.pathname)
+
+    // Not yet onboarded → must be on one of the pre-onboard pages
+    if (!user.isOnboarded && !isPreOnboardPath) {
+      return <Navigate to="/student/category" replace />
     }
-    if (user.isOnboarded && location.pathname === '/student/onboarding') {
+
+    // Already onboarded → don't let them revisit the setup pages
+    if (user.isOnboarded && isPreOnboardPath) {
       return <Navigate to="/student" replace />
     }
   }

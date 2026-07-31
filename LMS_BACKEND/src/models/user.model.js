@@ -92,6 +92,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
+    studentCategory: {
+      type: String,
+      enum: ["Training", "JobPlacement", null],
+      default: null
+    },
     documents: [documentSchema],
     certificates: [certificateSchema],
     classLinks: [classLinkSchema],
@@ -99,6 +104,26 @@ const userSchema = new mongoose.Schema(
     isOnboarded: {
       type: Boolean,
       default: false
+    },
+    programName: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    preferTime: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    preferDate: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    timeZone: {
+      type: String,
+      trim: true,
+      default: ''
     },
     currentStatusCityState: {
       type: String,
@@ -202,9 +227,14 @@ userSchema.methods.toPublicJSON = function () {
     country: this.country,
     address: this.address,
     isActive: this.isActive,
+    studentCategory: this.studentCategory,
     documents: this.documents,
     certificates: this.certificates,
     isOnboarded: this.isOnboarded,
+    programName: this.programName,
+    preferTime: this.preferTime,
+    preferDate: this.preferDate,
+    timeZone: this.timeZone,
     currentStatusCityState: this.currentStatusCityState,
     visaStatus: this.visaStatus,
     visaExpiryDate: this.visaExpiryDate,

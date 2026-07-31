@@ -21,7 +21,8 @@ const {
   downloadResume2,
   downloadCoverLetter,
   listClassLinks,
-  listInvoices
+  listInvoices,
+  trainingOnboard
 } = require("../controllers/student.controller");
 
 const studentRouter = Router();
@@ -60,6 +61,13 @@ studentRouter.post(
   ]),
   handleUploadError,
   onboardStudent
+);
+
+studentRouter.post(
+  "/training-onboard",
+  uploadDocument.single("resume"),
+  handleUploadError,
+  trainingOnboard
 );
 
 studentRouter.get("/resume/download", downloadResume);

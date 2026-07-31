@@ -30,7 +30,8 @@ const formatUserResponse = (user) => ({
   expectedSalary: user.expectedSalary,
   preferredJobType: user.preferredJobType,
   expectedSalaryPeriod: user.expectedSalaryPeriod,
-  securityClearance: user.securityClearance
+  securityClearance: user.securityClearance,
+  studentCategory: user.studentCategory
 });
 
 const registerStudent = async (req, res) => {

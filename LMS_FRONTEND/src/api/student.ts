@@ -45,6 +45,17 @@ export async function onboardStudent(formData: FormData) {
   return data.student
 }
 
+export async function trainingOnboard(formData: FormData) {
+  const data = await apiRequest<{ message: string; student: User }>(
+    '/student/training-onboard',
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+  return data.student
+}
+
 export async function downloadResume(filename: string) {
   return downloadFile('/student/resume/download', filename)
 }

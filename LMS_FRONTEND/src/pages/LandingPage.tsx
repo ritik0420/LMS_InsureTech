@@ -70,8 +70,12 @@ export function LandingPage() {
     setIsLoggingIn(true)
 
     try {
-      await login('STUDENT', loginData.email, loginData.password)
-      navigate('/student')
+      const loggedInUser = await login('STUDENT', loginData.email, loginData.password)
+      if (!loggedInUser.isOnboarded) {
+        navigate('/student/category')
+      } else {
+        navigate('/student')
+      }
     } catch (err) {
       if (err instanceof ApiClientError) {
         setLoginError('Invalid email or password. Please try again.')
@@ -100,7 +104,7 @@ export function LandingPage() {
 
       setFormData(initialFormData)
       setSubmitMessage({ type: 'success', text: 'Account created. You are signed in.' })
-      navigate('/student')
+      navigate('/student/category')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to create account right now.'
       setSubmitMessage({ type: 'error', text: message })

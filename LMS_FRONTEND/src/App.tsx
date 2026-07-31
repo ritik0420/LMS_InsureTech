@@ -18,6 +18,8 @@ import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
 import { StudentDocumentsPage } from './pages/student/StudentDocumentsPage'
 import { StudentLoginPage } from './pages/student/StudentLoginPage'
 import { StudentOnboardingPage } from './pages/student/StudentOnboardingPage'
+import { StudentCategoryPage } from './pages/student/StudentCategoryPage'
+import { StudentTrainingOnboardPage } from './pages/student/StudentTrainingOnboardPage'
 import { StudentPaymentsPage } from './pages/student/StudentPaymentsPage'
 import { StudentProfilePage } from './pages/student/StudentProfilePage'
 
@@ -79,6 +81,8 @@ export default function App() {
 
         {/* Student Portal Routes - Protected */}
         <Route element={<ProtectedRoute role="STUDENT" />}>
+          <Route path="/student/category" element={<StudentCategoryPage />} />
+          <Route path="/student/training-onboard" element={<StudentTrainingOnboardPage />} />
           <Route path="/student/onboarding" element={<StudentOnboardingPage />} />
           <Route
             element={<DashboardLayout navItems={studentNav} title="Student Portal" />}

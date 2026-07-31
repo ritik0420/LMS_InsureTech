@@ -192,6 +192,7 @@ const onboardStudent = async (req, res) => {
     }
 
     student.isOnboarded = true;
+    student.studentCategory = "JobPlacement";
 
     await student.save();
 
@@ -507,6 +508,55 @@ const listInvoices = async (req, res) => {
   }
 };
 
+const trainingOnboard = async (req, res) => {
+  try {
+    const student = await User.findById(req.user._id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const { fullName, programName, preferTime, preferDate, timeZone, phone } = req.body;
+
+    if (!fullName || !programName || !preferTime || !preferDate || !timeZone || !phone) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    student.fullName = fullName;
+    student.phone = phone;
+    student.programName = programName;
+    student.preferTime = preferTime;
+    student.preferDate = preferDate;
+    student.timeZone = timeZone;
+
+    if (req.file) {
+      student.resumeFile = {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+        size: req.file.size,
+        path: req.file.path
+      };
+    }
+
+    student.isOnboarded = true;
+    student.studentCategory = "Training";
+
+    await student.save();
+
+    const updated = await User.findById(student._id).select("-password");
+
+    return res.status(200).json({
+      message: "Training registration completed successfully",
+      student: updated
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to complete training registration",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -523,5 +573,6 @@ module.exports = {
   downloadResume2,
   downloadCoverLetter,
   listClassLinks,
-  listInvoices
+  listInvoices,
+  trainingOnboard
 };
