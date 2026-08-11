@@ -35,7 +35,11 @@ const updateProfile = async (req, res) => {
       expectedSalary,
       preferredJobType,
       expectedSalaryPeriod,
-      securityClearance
+      securityClearance,
+      programName,
+      preferDate,
+      preferTime,
+      timeZone
     } = req.body;
 
     if (fullName) student.fullName = fullName;
@@ -61,6 +65,10 @@ const updateProfile = async (req, res) => {
     if (expectedSalary !== undefined) student.expectedSalary = expectedSalary;
     if (expectedSalaryPeriod !== undefined) student.expectedSalaryPeriod = expectedSalaryPeriod;
     if (securityClearance !== undefined) student.securityClearance = securityClearance;
+    if (programName !== undefined) student.programName = programName;
+    if (preferDate !== undefined) student.preferDate = preferDate;
+    if (preferTime !== undefined) student.preferTime = preferTime;
+    if (timeZone !== undefined) student.timeZone = timeZone;
 
     if (preferredJobType !== undefined) {
       if (Array.isArray(preferredJobType)) {
@@ -96,10 +104,6 @@ const onboardStudent = async (req, res) => {
     const student = await User.findById(req.user._id);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ message: "Resume file is required" });
     }
 
     const {

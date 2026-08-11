@@ -1,11 +1,24 @@
 ﻿import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { BookOpen, Briefcase, LogOut, ArrowRight, GraduationCap } from 'lucide-react'
+import { BookOpen, Briefcase, LogOut, ArrowRight } from 'lucide-react'
 
 export function StudentCategoryPage() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
+
+  if (user?.isOnboarded) {
+    return <Navigate to="/student" replace />
+  }
+
+  if (user?.studentCategory === 'Training') {
+    return <Navigate to="/student/training-onboard" replace />
+  }
+
+  if (user?.studentCategory === 'JobPlacement') {
+    return <Navigate to="/student/onboarding" replace />
+  }
+
   const [selected, setSelected] = useState<'Training' | 'JobPlacement' | null>(null)
   const [hovering, setHovering] = useState<'Training' | 'JobPlacement' | null>(null)
 
@@ -42,9 +55,6 @@ export function StudentCategoryPage() {
               alt="InsureTech Logo"
               className="category-page__logo"
             />
-          </div>
-          <div className="category-page__icon-badge">
-            <GraduationCap className="h-6 w-6" />
           </div>
           <h1 className="category-page__title">Welcome to InsureTech LMS</h1>
           <p className="category-page__subtitle">
@@ -135,8 +145,8 @@ export function StudentCategoryPage() {
             {selected === 'Training'
               ? 'Training selected — quick 8-field form ahead'
               : selected === 'JobPlacement'
-              ? 'Job Placement selected — detailed profile setup ahead'
-              : 'Select a program to continue'}
+                ? 'Job Placement selected — detailed profile setup ahead'
+                : 'Select a program to continue'}
           </p>
         </div>
       </div>

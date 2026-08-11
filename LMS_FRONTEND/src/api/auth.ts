@@ -37,6 +37,7 @@ export async function registerStudent(payload: {
   password: string
   phone?: string
   address?: string
+  studentCategory?: 'Training' | 'JobPlacement' | null
 }) {
   const data = await apiRequest<AuthResponse & { student?: User }>('/auth/signup', {
     method: 'POST',

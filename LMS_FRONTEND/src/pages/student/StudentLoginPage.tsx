@@ -26,12 +26,8 @@ export function StudentLoginPage() {
     setError('')
     setLoading(true)
     try {
-      const loggedInUser = await login('STUDENT', email, password)
-      if (!loggedInUser.isOnboarded) {
-        navigate('/student/category')
-      } else {
-        navigate('/student')
-      }
+      await login('STUDENT', email, password)
+      navigate('/student')
     } catch (err) {
       if (err instanceof ApiClientError) {
         // Mask all backend errors — never expose internal messages like

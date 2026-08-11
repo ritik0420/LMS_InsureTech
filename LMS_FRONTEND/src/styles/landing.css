@@ -472,3 +472,96 @@
   background: #e2e8f0;
   color: #0f172a;
 }
+
+/* ═══════  SIGNUP CATEGORY CARDS  ═══════ */
+.signup-category-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+  margin-top: 0.25rem;
+}
+
+.signup-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.signup-category-card:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.signup-category-card__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  transition: color 0.2s;
+  color: #64748b;
+}
+
+.signup-category-card__title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.signup-category-card__desc {
+  font-size: 0.65rem;
+  color: #64748b;
+  line-height: 1.3;
+  font-weight: 400;
+}
+
+/* Training selected */
+.signup-category-card--training.signup-category-card--selected {
+  border-color: #06b6d4;
+  background: linear-gradient(135deg, #ecfeff 0%, #e0f2fe 100%);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+}
+
+.signup-category-card--training.signup-category-card--selected .signup-category-card__icon {
+  color: #0891b2;
+}
+
+.signup-category-card--training.signup-category-card--selected .signup-category-card__title {
+  color: #0e7490;
+}
+
+.signup-category-card--training:hover:not(.signup-category-card--selected) {
+  border-color: #67e8f9;
+  background: #f0fdfe;
+}
+
+/* Job Placement selected */
+.signup-category-card--job.signup-category-card--selected {
+  border-color: #6366f1;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.signup-category-card--job.signup-category-card--selected .signup-category-card__icon {
+  color: #4f46e5;
+}
+
+.signup-category-card--job.signup-category-card--selected .signup-category-card__title {
+  color: #4338ca;
+}
+
+.signup-category-card--job:hover:not(.signup-category-card--selected) {
+  border-color: #a5b4fc;
+  background: #f5f3ff;
+}

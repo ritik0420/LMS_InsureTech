@@ -6,6 +6,8 @@ import {
   Lock,
   AlertCircle,
   BadgeCheck,
+  BookOpen,
+  Briefcase,
 } from 'lucide-react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useState, type ChangeEvent, type FormEvent } from 'react'
@@ -47,6 +49,7 @@ export function LandingPage() {
   const [loginError, setLoginError] = useState('')
   const [formData, setFormData] = useState(initialFormData)
   const [loginData, setLoginData] = useState(initialLoginData)
+  const [studentCategory, setStudentCategory] = useState<'Training' | 'JobPlacement' | null>(null)
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -70,12 +73,8 @@ export function LandingPage() {
     setIsLoggingIn(true)
 
     try {
-      const loggedInUser = await login('STUDENT', loginData.email, loginData.password)
-      if (!loggedInUser.isOnboarded) {
-        navigate('/student/category')
-      } else {
-        navigate('/student')
-      }
+      await login('STUDENT', loginData.email, loginData.password)
+      navigate('/student')
     } catch (err) {
       if (err instanceof ApiClientError) {
         setLoginError('Invalid email or password. Please try again.')
@@ -96,15 +95,20 @@ export function LandingPage() {
       return
     }
 
+    if (!studentCategory) {
+      setSubmitMessage({ type: 'error', text: 'Please select your program type (Training or Job Placement).' })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
       const fullName = formData.email.split('@')[0] || 'Student'
-      await signup(fullName, formData.email, formData.password)
+      await signup(fullName, formData.email, formData.password, studentCategory)
 
       setFormData(initialFormData)
-      setSubmitMessage({ type: 'success', text: 'Account created. You are signed in.' })
-      navigate('/student/category')
+      setStudentCategory(null)
+      navigate('/student')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to create account right now.'
       setSubmitMessage({ type: 'error', text: message })
@@ -311,6 +315,33 @@ export function LandingPage() {
         </div>
       </div>
 
+      {/* Program Type Selection */}
+      <div className="auth-field">
+        <label className="auth-field-label">Program Type *</label>
+        <div className="signup-category-cards">
+          <button
+            type="button"
+            id="signup-category-training"
+            className={`signup-category-card signup-category-card--training${studentCategory === 'Training' ? ' signup-category-card--selected' : ''}`}
+            onClick={() => setStudentCategory('Training')}
+          >
+            <BookOpen className="signup-category-card__icon" />
+            <span className="signup-category-card__title">Training</span>
+            <span className="signup-category-card__desc">Build skills in InsureTech</span>
+          </button>
+          <button
+            type="button"
+            id="signup-category-job"
+            className={`signup-category-card signup-category-card--job${studentCategory === 'JobPlacement' ? ' signup-category-card--selected' : ''}`}
+            onClick={() => setStudentCategory('JobPlacement')}
+          >
+            <Briefcase className="signup-category-card__icon" />
+            <span className="signup-category-card__title">Job Placement</span>
+            <span className="signup-category-card__desc">Get matched with employers</span>
+          </button>
+        </div>
+      </div>
+
       {authExtrasRow}
 
       <button
@@ -410,6 +441,33 @@ export function LandingPage() {
             aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
           >
             {showConfirmPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Program Type Selection */}
+      <div className="auth-field">
+        <label className="auth-field-label">Program Type *</label>
+        <div className="signup-category-cards">
+          <button
+            type="button"
+            id="desktop-category-training"
+            className={`signup-category-card signup-category-card--training${studentCategory === 'Training' ? ' signup-category-card--selected' : ''}`}
+            onClick={() => setStudentCategory('Training')}
+          >
+            <BookOpen className="signup-category-card__icon" />
+            <span className="signup-category-card__title">Training</span>
+            <span className="signup-category-card__desc">Build skills in InsureTech</span>
+          </button>
+          <button
+            type="button"
+            id="desktop-category-job"
+            className={`signup-category-card signup-category-card--job${studentCategory === 'JobPlacement' ? ' signup-category-card--selected' : ''}`}
+            onClick={() => setStudentCategory('JobPlacement')}
+          >
+            <Briefcase className="signup-category-card__icon" />
+            <span className="signup-category-card__title">Job Placement</span>
+            <span className="signup-category-card__desc">Get matched with employers</span>
           </button>
         </div>
       </div>

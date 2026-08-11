@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { onboardStudent } from '../../api/student'
 import { useAuth } from '../../context/AuthContext'
 import { Alert } from '../../components/ui/Alert'
@@ -85,7 +85,19 @@ const COUNTRY_OPTIONS = [
 export function StudentOnboardingPage() {
   const navigate = useNavigate()
   const { user, updateUser, logout } = useAuth()
-  
+
+  if (user?.isOnboarded) {
+    return <Navigate to="/student" replace />
+  }
+
+  if (!user?.studentCategory) {
+    return <Navigate to="/student/category" replace />
+  }
+
+  if (user.studentCategory !== 'JobPlacement') {
+    return <Navigate to="/student/training-onboard" replace />
+  }
+
   const [step, setStep] = useState(1)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)

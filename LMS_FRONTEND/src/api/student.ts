@@ -10,19 +10,24 @@ export async function updateProfile(payload: {
   fullName?: string
   phone?: string
   address?: string
+  country?: string
   password?: string
   currentStatusCityState?: string
   visaStatus?: string
-  visaExpiryDate?: string
+  visaExpiryDate?: string | null
   totalExperience?: string
   preferredDesignation?: string
   preferredLocations?: string
-  dateOfBirth?: string
+  dateOfBirth?: string | null
   openToRelocation?: string
   expectedSalary?: string
   preferredJobType?: string[]
   expectedSalaryPeriod?: string
   securityClearance?: string
+  programName?: string
+  preferDate?: string
+  preferTime?: string
+  timeZone?: string
 }) {
   const data = await apiRequest<{ message: string; student: User }>(
     '/student/profile',

@@ -36,7 +36,7 @@ const formatUserResponse = (user) => ({
 
 const registerStudent = async (req, res) => {
   try {
-    const { fullName, firstName, lastName, email, password, phone, address } = req.body;
+    const { fullName, firstName, lastName, email, password, phone, address, studentCategory } = req.body;
     const resolvedFullName = fullName || [firstName, lastName].filter(Boolean).join(" ").trim();
 
     if (!resolvedFullName || !email || !password) {
@@ -57,7 +57,8 @@ const registerStudent = async (req, res) => {
       password: hashedPassword,
       role: "STUDENT",
       phone: phone || "",
-      address: address || ""
+      address: address || "",
+      studentCategory: studentCategory || null
     });
 
     const token = signToken(student);

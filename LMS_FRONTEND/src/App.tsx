@@ -17,11 +17,11 @@ import { StudentClassLinksPage } from './pages/student/StudentClassLinksPage'
 import { StudentDashboardPage } from './pages/student/StudentDashboardPage'
 import { StudentDocumentsPage } from './pages/student/StudentDocumentsPage'
 import { StudentLoginPage } from './pages/student/StudentLoginPage'
-import { StudentOnboardingPage } from './pages/student/StudentOnboardingPage'
-import { StudentCategoryPage } from './pages/student/StudentCategoryPage'
-import { StudentTrainingOnboardPage } from './pages/student/StudentTrainingOnboardPage'
 import { StudentPaymentsPage } from './pages/student/StudentPaymentsPage'
 import { StudentProfilePage } from './pages/student/StudentProfilePage'
+import { StudentCategoryPage } from './pages/student/StudentCategoryPage'
+import { StudentOnboardingPage } from './pages/student/StudentOnboardingPage'
+import { StudentTrainingOnboardPage } from './pages/student/StudentTrainingOnboardPage'
 
 const adminNav = [
   { to: '/admin/students', label: 'Students' },
@@ -81,9 +81,6 @@ export default function App() {
 
         {/* Student Portal Routes - Protected */}
         <Route element={<ProtectedRoute role="STUDENT" />}>
-          <Route path="/student/category" element={<StudentCategoryPage />} />
-          <Route path="/student/training-onboard" element={<StudentTrainingOnboardPage />} />
-          <Route path="/student/onboarding" element={<StudentOnboardingPage />} />
           <Route
             element={<DashboardLayout navItems={studentNav} title="Student Portal" />}
           >
@@ -93,6 +90,10 @@ export default function App() {
             <Route path="/student/certificates" element={<StudentCertificatesPage />} />
             <Route path="/student/class-links" element={<StudentClassLinksPage />} />
             <Route path="/student/payments" element={<StudentPaymentsPage />} />
+            {/* Student onboarding flow */}
+            <Route path="/student/category" element={<StudentCategoryPage />} />
+            <Route path="/student/onboarding" element={<StudentOnboardingPage />} />
+            <Route path="/student/training-onboard" element={<StudentTrainingOnboardPage />} />
           </Route>
         </Route>
 

@@ -1,11 +1,11 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { trainingOnboard } from '../../api/student'
 import { useAuth } from '../../context/AuthContext'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { Upload, Check, LogOut, BookOpen } from 'lucide-react'
+import { Upload, Check, LogOut } from 'lucide-react'
 
 const TIMEZONE_OPTIONS = [
   'America/New_York (EST/EDT)',
@@ -31,6 +31,18 @@ const TIMEZONE_OPTIONS = [
 export function StudentTrainingOnboardPage() {
   const navigate = useNavigate()
   const { user, updateUser, logout } = useAuth()
+
+  if (user?.isOnboarded) {
+    return <Navigate to="/student" replace />
+  }
+
+  if (!user?.studentCategory) {
+    return <Navigate to="/student/category" replace />
+  }
+
+  if (user.studentCategory !== 'Training') {
+    return <Navigate to="/student/onboarding" replace />
+  }
 
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -105,15 +117,7 @@ export function StudentTrainingOnboardPage() {
       <div className="training-onboard-page__inner">
         {/* Header */}
         <div className="training-onboard-page__header">
-          <div className="training-onboard-page__logo-wrap">
-            <img
-              src="/insuretech logo (1).png"
-              alt="InsureTech Logo"
-              className="training-onboard-page__logo"
-            />
-          </div>
           <div className="training-onboard-page__badge">
-            <BookOpen className="h-5 w-5" />
             Training Program
           </div>
           <h2 className="training-onboard-page__title">Complete Your Registration</h2>

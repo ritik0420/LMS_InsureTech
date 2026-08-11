@@ -31,6 +31,10 @@ export interface User {
   expectedSalaryPeriod?: string
   securityClearance?: string
   studentCategory?: 'Training' | 'JobPlacement' | null
+  programName?: string
+  preferDate?: string
+  preferTime?: string
+  timeZone?: string
   createdAt?: string
   updatedAt?: string
 }
