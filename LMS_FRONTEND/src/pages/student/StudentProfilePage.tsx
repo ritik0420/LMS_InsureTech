@@ -6,6 +6,8 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Textarea } from '../../components/ui/Textarea'
 import { Spinner } from '../../components/ui/helpers'
+import { DatePicker } from '../../components/ui/DatePicker'
+import { TimePicker } from '../../components/ui/TimePicker'
 import { useAuth } from '../../context/AuthContext'
 import { FileText, Download, Upload, BookOpen, Briefcase, CheckCircle2, Circle } from 'lucide-react'
 
@@ -394,11 +396,11 @@ export function StudentProfilePage() {
               value={currentStatusCityState}
               onChange={(e) => setCurrentStatusCityState(e.target.value)}
             />
-            <Input
+            <DatePicker
               label="Date of Birth"
-              type="date"
               value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
+              onChange={setDateOfBirth}
+              placeholder="Select date of birth"
             />
           </div>
           <Textarea
@@ -432,24 +434,18 @@ export function StudentProfilePage() {
               placeholder="e.g. InsureTech Certification Program"
             />
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-700">Preferred Date</label>
-                <input
-                  type="date"
-                  value={preferDate}
-                  onChange={(e) => setPreferDate(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-700">Preferred Time</label>
-                <input
-                  type="time"
-                  value={preferTime}
-                  onChange={(e) => setPreferTime(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                />
-              </div>
+              <DatePicker
+                label="Preferred Date"
+                value={preferDate}
+                onChange={setPreferDate}
+                placeholder="Pick a date"
+              />
+              <TimePicker
+                label="Preferred Time"
+                value={preferTime}
+                onChange={setPreferTime}
+                placeholder="Pick a time"
+              />
             </div>
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-slate-700">Time Zone</label>
@@ -527,7 +523,7 @@ export function StudentProfilePage() {
                     ))}
                   </select>
                 </div>
-                <Input label="Visa Expiry Date" type="date" value={visaExpiryDate} onChange={(e) => setVisaExpiryDate(e.target.value)} />
+                <DatePicker label="Visa Expiry Date" value={visaExpiryDate} onChange={setVisaExpiryDate} placeholder="Select expiry date" />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Input label="Total Experience *" value={totalExperience} onChange={(e) => setTotalExperience(e.target.value)} placeholder="e.g. 3 years in sales" required />

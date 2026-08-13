@@ -1,10 +1,12 @@
-﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { trainingOnboard } from '../../api/student'
 import { useAuth } from '../../context/AuthContext'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { DatePicker } from '../../components/ui/DatePicker'
+import { TimePicker } from '../../components/ui/TimePicker'
 import { Upload, Check, LogOut } from 'lucide-react'
 
 const TIMEZONE_OPTIONS = [
@@ -167,19 +169,19 @@ export function StudentTrainingOnboardPage() {
 
             {/* Preferred Date & Time */}
             <div className="training-onboard-page__row">
-              <Input
+              <DatePicker
                 label="Preferred Date *"
-                type="date"
                 value={preferDate}
-                onChange={(e) => setPreferDate(e.target.value)}
+                onChange={setPreferDate}
                 required
+                placeholder="Pick a date"
               />
-              <Input
+              <TimePicker
                 label="Preferred Time *"
-                type="time"
                 value={preferTime}
-                onChange={(e) => setPreferTime(e.target.value)}
+                onChange={setPreferTime}
                 required
+                placeholder="Pick a time"
               />
             </div>
 

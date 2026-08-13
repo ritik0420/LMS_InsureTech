@@ -3,6 +3,7 @@
 @import "./styles/landing.css";
 @import "./styles/dashboard.css";
 @import "./styles/category.css";
+@import "./styles/pickers.css";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
