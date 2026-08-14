@@ -93,6 +93,11 @@ const updateStudent = async (req, res) => {
       address,
       isActive,
       password,
+      studentCategory,
+      programName,
+      preferTime,
+      preferDate,
+      timeZone,
       currentStatusCityState,
       visaStatus,
       visaExpiryDate,
@@ -112,6 +117,11 @@ const updateStudent = async (req, res) => {
     if (country !== undefined) student.country = country;
     if (address !== undefined) student.address = address;
     if (isActive !== undefined) student.isActive = isActive;
+    if (studentCategory !== undefined) student.studentCategory = studentCategory;
+    if (programName !== undefined) student.programName = programName;
+    if (preferTime !== undefined) student.preferTime = preferTime;
+    if (preferDate !== undefined) student.preferDate = preferDate;
+    if (timeZone !== undefined) student.timeZone = timeZone;
 
     if (currentStatusCityState !== undefined) student.currentStatusCityState = currentStatusCityState;
     if (visaStatus !== undefined) student.visaStatus = visaStatus;

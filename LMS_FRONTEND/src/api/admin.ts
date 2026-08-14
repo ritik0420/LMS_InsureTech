@@ -35,8 +35,26 @@ export async function updateStudent(
     email: string
     password: string
     phone: string
+    country: string
     address: string
     isActive: boolean
+    studentCategory: string | null
+    programName: string
+    preferTime: string
+    preferDate: string
+    timeZone: string
+    currentStatusCityState: string
+    visaStatus: string
+    visaExpiryDate: string | null
+    totalExperience: string
+    preferredDesignation: string
+    preferredLocations: string
+    dateOfBirth: string | null
+    openToRelocation: string
+    expectedSalary: string
+    expectedSalaryPeriod: string
+    preferredJobType: string[]
+    securityClearance: string
   }>,
 ) {
   const data = await apiRequest<{ message: string; student: User }>(
